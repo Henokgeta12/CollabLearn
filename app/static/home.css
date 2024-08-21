@@ -1,0 +1,125 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+/* Header Styles */
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 10px;
+}
+
+.user-info {
+    text-align: right;
+    margin-top: -30px;
+}
+
+.user-info p {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.user-info button {
+    background-color: #e8491d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.user-info button:hover {
+    background-color: #d43513;
+}
+
+/* Main Content Styles */
+main {
+    margin: 40px 0;
+}
+
+.search-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.search-section input {
+    width: 70%;
+    padding: 10px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-section button {
+    background-color: #35424a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.search-section button:hover {
+    background-color: #2b363e;
+}
+
+.group-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.group-actions button {
+    background-color: #e8491d;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.group-actions button:hover {
+    background-color: #d43513;
+}
+
+/* Footer Styles */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #acc7d8;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000000;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 40px;
+}
+
+footer p {
+    margin: 0;
+}
