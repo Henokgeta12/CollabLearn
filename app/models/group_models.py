@@ -12,6 +12,10 @@ class StudyGroups(db.Model):
     description = db.Column(db.Text, nullable=True)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
+    privacy = db.Column(db.String(10), nullable=False, default='public')  # 'public' or 'private'
+    referral_code = db.Column(db.String(50), unique=True, nullable=False)  # Unique referral code
+
+
 
     creator = db.relationship('Users', backref=db.backref('study_groups', lazy=True))
 
@@ -29,6 +33,18 @@ class Messages(db.Model):
     group = db.relationship('StudyGroups', backref=db.backref('messages', cascade='all, delete-orphan'))
     user = db.relationship('Users', backref=db.backref('messages', cascade='all, delete-orphan'))
 
+class Notifications(db.Model):
+    __tablename__ = 'notifications'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    read = db.Column(db.Boolean, nullable=False, default=False)
+    created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
+
+    # Relationship with Users
+    user = db.relationship('Users', backref='notifications')
+
+
 class GroupMemberships(db.Model):
     """
     Represents a user's membership in a study group.
@@ -38,6 +54,8 @@ class GroupMemberships(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('study_groups.id'), nullable=False, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     joined_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
+    role = db.Column(db.String(10), nullable=False, default='member')  # 'admin' or 'member'
+
 
     group = db.relationship('StudyGroups', backref=db.backref('group_memberships', cascade='all, delete-orphan'))
     user = db.relationship('Users', backref=db.backref('group_memberships', cascade='all, delete-orphan'))
