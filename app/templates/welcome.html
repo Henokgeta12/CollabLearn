@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Collab Study Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='welcome.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to Collab Study Platform</h1>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+            </ul>
+        </nav>
+        
+        <section class="description">
+            <p>Collab Study Platform is your go-to place for creating and joining study groups. Whether you want to collaborate with peers or manage study sessions, our platform offers the tools you need to succeed.</p>
+        </section>
+        
+        <footer>
+            <p>&copy; 2024 Collab Study Platform. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

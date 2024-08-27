@@ -1,9 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
-db = SQLAlchemy()
-
-class Users(db.Model):
+from app import db
+class Users(db.Model,UserMixin):
     """
     Represents a user in the platform.
     """
