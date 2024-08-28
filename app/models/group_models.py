@@ -1,4 +1,5 @@
-from app import db # Import db from app
+from app.extensions import db  # Import extensions
+# Import db from app
 
 class StudyGroups(db.Model):
     """
