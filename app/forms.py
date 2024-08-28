@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, EmailField, BooleanField
 from wtforms.validators import InputRequired, Length, Email, EqualTo, ValidationError, Regexp
-from your_project.models import Users  # Import your Users model to check for existing users
+from app.models.user_models import Users  # Import your Users model to check for existing users
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[

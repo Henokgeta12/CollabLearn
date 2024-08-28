@@ -1,7 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
+from app.extensions import db
+from flask_login import UserMixin 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db
 class Users(db.Model,UserMixin):
     """
     Represents a user in the platform.
