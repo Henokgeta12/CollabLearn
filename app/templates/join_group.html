@@ -1,0 +1,30 @@
+<!-- join_group.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Group - Collaborative Study Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='join_group.css') }}">
+</head>
+<body>
+   
+    <div class="join-group-container">
+        <h1>Join a Group</h1>
+        <form method="POST" action="{{ url_for('join_group') }}">
+            <label for="referral_code">Group Referral Code:</label>
+            <input type="text" id="referral_code" name="referral_code" required>
+            <button type="submit">Join Group</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

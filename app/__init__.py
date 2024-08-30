@@ -22,6 +22,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
 
+
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)

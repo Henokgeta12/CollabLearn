@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Details - Collaborative Study Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='group_details.css') }}">
+</head>
+<body>
+    <!-- Group Details Container -->
+    <div class="group-details-container">
+        <h1>{{ group.name }}</h1> <!-- Display the group name -->
+        <p><strong>Description:</strong> {{ group.description }}</p> <!-- Display the group description -->
+        <p><strong>Created By:</strong> {{ group.creator.username }}</p> <!-- Display the creator's username -->
+        <p><strong>Privacy:</strong> {{ group.privacy | capitalize }}</p> <!-- Display the group's privacy -->
+
+        <!-- Display Referral Code if Group is Private -->
+        {% if group.privacy == 'private' %}
+            <p><strong>Referral Code:</strong> {{ referral_code }}</p>
+        {% endif %}
+
+        <!-- Members Section -->
+        <h2>Members</h2>
+        <ul>
+            {% for member in members %}
+                <li>{{ member.user.username }} ({{ member.role | capitalize }})</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Actions -->
+        <div class="actions">
+            {% if current_user.id == group.created_by %}
+                <button>Edit Group</button>
+                <button>Delete Group</button>
+            {% endif %}
+            <button>Leave Group</button>
+        </div>
+    </div>
+</body>
+</html>

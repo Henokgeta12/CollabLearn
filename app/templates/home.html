@@ -12,9 +12,15 @@
         <div class="container">
             <h1>Collaborative Study Platform</h1>
             <div class="user-info">
-                <!-- Displayed after login -->
-                <p>Welcome, <span id="username">Username</span></p>
-                <button id="logout">Logout</button>
+                {% if current_user.is_authenticated %}
+                    <!-- Display the logged-in user's username -->
+                    <p>Welcome, <span id="username">{{ current_user.username }}</span></p>
+                    <form action="{{ url_for('logout') }}" method="post">
+                        <button type="submit" id="logout">Logout</button>
+                    </form>
+                {% else %}
+                    <p>Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -23,13 +29,23 @@
     <main>
         <div class="container">
             <div class="search-section">
-                <input type="text" placeholder="Search Groups or Users...">
+                <label for="search">Search:</label>
+                <input type="text" id="search" placeholder="Search Groups or Users...">
                 <button>Search</button>
             </div>
 
             <div class="group-actions">
-                <button id="create-group">Create Group</button>
-                <button id="join-group">Join Group</button>
+                <!-- Create Group Form -->
+                <form action="{{ url_for('create_group') }}" method="post">
+                    <!-- Include necessary fields here -->
+                    <button type="submit" id="create-group">Create Group</button>
+                </form>
+
+                <!-- Join Group Form -->
+                <form action="{{ url_for('join_group') }}" method="post">
+                    <!-- Include necessary fields here -->
+                    <button type="submit" id="join-group">Join Group</button>
+                </form>
             </div>
         </div>
     </main>
