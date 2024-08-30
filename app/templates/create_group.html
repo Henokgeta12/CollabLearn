@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Group - Collaborative Study Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_group.css') }}">
+</head>
+<body>
+    <!-- Flash Message Display -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}    
+            {% endif %}
+        {% endwith %}
+    </div>
+    <!-- End Flash Message Display -->
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>Create a New Group</h1>
+            <div class="user-info">
+                <p>Welcome, <span id="username">{{ current_user.username }}</span></p>
+                <form action="{{ url_for('logout') }}" method="post">
+                    <button type="submit" id="logout">Logout</button>
+                </form>           
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main>
+        <div class="container">
+            <form action="{{ url_for('create_group') }}" method="POST" class="create-group-form">
+                <div class="form-group">
+                    <label for="group-name">Group Name:</label>
+                    <input type="text" id="group-name" name="group_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="group-description">Group Description:</label>
+                    <textarea id="group-description" name="group_description"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="group-visibility">Group Visibility:</label>
+                    <select id="group-visibility" name="group_visibility">
+                        <option value="public" >Public</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+                <form action="url_for('group_detail')" method="get">
+                <button type="submit" id="create-group">Create Group</button>
+               </form>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

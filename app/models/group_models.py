@@ -1,5 +1,5 @@
 from app.extensions import db  # Import extensions
-# Import db from app
+import secrets
 
 class StudyGroups(db.Model):
     """
@@ -12,9 +12,13 @@ class StudyGroups(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
     privacy = db.Column(db.String(10), nullable=False, default='public')  # 'public' or 'private'
-    referral_code = db.Column(db.String(50), unique=True, nullable=False)  # Unique referral code
+    referral_code = db.Column(db.String(50), unique=True, nullable=False, default='')  # Unique referral code
 
     creator = db.relationship('Users', backref=db.backref('study_groups', lazy=True, cascade="all, delete-orphan"))
+
+    def generate_referral_code(self):
+        # Generate a random referral code
+        self.referral_code = secrets.token_urlsafe(8)  # Generates a URL-safe base64-encoded text string
 
 class Messages(db.Model):
     """
