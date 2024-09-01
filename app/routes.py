@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, flash,request
 from flask_login import login_user, logout_user, login_required, current_user
 from app.forms import RegistrationForm, LoginForm
-from app.models.user_models import db, Users
+from app.models.user_models import db , Users
+from app.models.group_models import StudyGroups, GroupMemberships
 
 def register_routes(app):
     @app.route('/')
@@ -52,10 +53,10 @@ def register_routes(app):
     @login_required
     def create_group():
         if request.method == 'POST':
-            group_name = request.form['group_name']
-            description = request.form['description']
-            privacy = request.form['privacy']  # 'public' or 'private'
-            user_id = current_user.id  # Current user's ID
+            group_name = request.form.get('group_name')
+            description = request.form.get('group_description')
+            privacy = request.form.get('group_visibility')
+            user_id = current_user.id
 
             if not group_name or not privacy:
                 flash('Group name and privacy are required.', 'danger')
@@ -82,10 +83,21 @@ def register_routes(app):
             )
             db.session.add(new_membership)
             db.session.commit()
+             # Fetch the group details from the database
+            group = StudyGroups.query.get(new_group.id)
+
+            # Fetch the group members
+            members = GroupMemberships.query.filter_by(group_id=new_group.id).all()
+
+            # Fetch the referral code for the group (if it's private)
+            referral_code = group.referral_code if group.privacy == 'private' else None
+
             flash('Group created successfully!', 'success')
-            return redirect(url_for('group_detail', group_id=new_group.id))
+            return render_template('group_detail.html', group=group, members=members, referral_code=referral_code)
+
 
         return render_template('create_group.html')
+
 
 
     @app.route('/join_group', methods=['GET', 'POST'])
@@ -120,7 +132,8 @@ def register_routes(app):
             db.session.add(new_membership)
             db.session.commit()
             flash('You have successfully joined the group!', 'success')
-            return redirect(url_for('group_detail', group_id=group.id,))
+            return render_template('group_details.html', group=group, members=members, referral_code=referral_code)
+
 
         return render_template('join_group.html')  # Render form for GET requests   
     @app.route('/group_detail/<int:group_id>', methods=['GET'])
