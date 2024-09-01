@@ -1,1 +1,0 @@
-from app.config import Config  # Import Config from config.py in the root directory
