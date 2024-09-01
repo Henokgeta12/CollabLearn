@@ -19,7 +19,7 @@ def create_app(config_class=Config):
     Returns:
         Flask: The created Flask application instance.
     """
-    app = Flask(__name__)
+    app = Flask(__name__,template_folder="templates")
     app.config.from_object(Config)
 
 

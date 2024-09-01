@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Group - Collaborative Study Platform</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='create_group.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='create_group.css')}}">
 </head>
 <body>
     <!-- Flash Message Display -->
@@ -25,7 +25,7 @@
             <h1>Create a New Group</h1>
             <div class="user-info">
                 <p>Welcome, <span id="username">{{ current_user.username }}</span></p>
-                <form action="{{ url_for('logout') }}" method="post">
+                <form action="{{ url_for('logout') }}" method="POST">
                     <button type="submit" id="logout">Logout</button>
                 </form>           
             </div>
@@ -35,7 +35,7 @@
     <!-- Main Content Section -->
     <main>
         <div class="container">
-            <form action="{{ url_for('create_group') }}" method="POST" class="create-group-form">
+            <form method="POST" action="{{ url_for('create_group') }}" class="create-group-form">
                 <div class="form-group">
                     <label for="group-name">Group Name:</label>
                     <input type="text" id="group-name" name="group_name" required>
@@ -53,9 +53,7 @@
                         <option value="private">Private</option>
                     </select>
                 </div>
-                <form action="url_for('group_detail')" method="get">
                 <button type="submit" id="create-group">Create Group</button>
-               </form>
             </form>
         </div>
     </main>
