@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='group_details.css') }}">
 </head>
 <body>
+  
     <!-- Group Details Container -->
     <div class="group-details-container">
         <h1>{{ group.name }}</h1> <!-- Display the group name -->
@@ -15,9 +16,11 @@
         <p><strong>Privacy:</strong> {{ group.privacy | capitalize }}</p> <!-- Display the group's privacy -->
 
         <!-- Display Referral Code if Group is Private -->
-        {% if group.privacy == 'private' %}
+        <div class="referral-code">
+            {% if group.privacy == 'private' %}
             <p><strong>Referral Code:</strong> {{ referral_code }}</p>
         {% endif %}
+        </div>
 
         <!-- Members Section -->
         <h2>Members</h2>
