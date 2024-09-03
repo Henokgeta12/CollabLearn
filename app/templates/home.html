@@ -29,9 +29,12 @@
     <main>
         <div class="container">
             <div class="search-section">
-                <label for="search">Search:</label>
-                <input type="text" id="search" placeholder="Search Groups or Users...">
-                <button>Search</button>
+                <!-- Search Bar -->
+                 <form action="{{ url_for('search') }}" method="get">
+                    <label for="search">Search:</label>
+                    <input type="text" id="search" name = "search" placeholder="Search Groups or Users...">
+                    <button>Search</button>
+                 </form>
             </div>
 
             <div class="group-actions">

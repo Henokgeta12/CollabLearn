@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Study Space</title>
+    <link rel="stylesheet" href="../static/group.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>{{ group.name }}</h1>
+            <p>{{ group.description }}</p>
+            <a href="{{ url_for('leave_group', group_id=group.id) }}" class="btn">Leave Group</a>
+        </div>
+    </header>
+
+    <main class="group-content">
+        <!-- Messaging Section -->
+        <section id="messages">
+            <h2>Group Chat</h2>
+            <div id="message-list">
+                {% for message in messages %}
+                    <div class="message">
+                        <strong>{{ message.user.username }}</strong>: {{ message.content }}
+                        <span class="timestamp">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+            <form action="{{ url_for('post_message', group_id=group.id) }}" method="POST">
+                <textarea name="content" placeholder="Type your message..."></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </section>
+
+        <!-- Resource Sharing Section -->
+        <section id="resources">
+            <h2>Group Resources</h2>
+            <ul>
+                {% for resource in resources %}
+                    <li>
+                        <a href="{{ resource.file_url }}" download>{{ resource.filename }}</a>
+                        <span class="uploaded-by">Uploaded by {{ resource.uploaded_by_user.username }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+            <form action="{{ url_for('upload_resource', group_id=group.id) }}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <button type="submit">Upload</button>
+            </form>
+        </section>
+
+        <!-- Group Notes Section -->
+        <section id="notes">
+            <h2>Group Notes</h2>
+            <textarea id="group-notes" placeholder="Collaborate on group notes...">{{ group_notes.content }}</textarea>
+            <button id="save-notes">Save Notes</button>
+        </section>
+
+        <!-- Task Management Section -->
+        <section id="tasks">
+            <h2>Task Management</h2>
+            <ul>
+                {% for task in tasks %}
+                    <li>{{ task.description }} - <em>{{ task.status }}</em></li>
+                {% endfor %}
+            </ul>
+            <form action="{{ url_for('create_task', group_id=group.id) }}" method="POST">
+                <input type="text" name="description" placeholder="New task description">
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- You can add JavaScript here for real-time updates, AJAX requests, etc. -->
+    <script src="{{ url_for('static', filename='group.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Search Results for "{{ query }}"</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Users</h2>
+            {% if results.users %}
+                <ul>
+                    {% for user in results.users %}
+                        <li>{{ user.username }} - {{ user.email }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No users found matching your query.</p>
+            {% endif %}
+
+            <h2>Study Groups</h2>
+            {% if results.groups %}
+                <ul>
+                    {% for group in results.groups %}
+                        <li>{{ group.name }} - {{ group.description }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No groups found matching your query.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -20,30 +20,6 @@ class StudyGroups(db.Model):
         # Generate a random referral code
         self.referral_code = secrets.token_urlsafe(8)  # Generates a URL-safe base64-encoded text string
 
-class Messages(db.Model):
-    """
-    Represents a message posted within a study group.
-    """
-    __tablename__ = 'messages'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('study_groups.id', ondelete='CASCADE'), nullable=False, index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
-    content = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
-
-    group = db.relationship('StudyGroups', backref=db.backref('messages', cascade='all, delete-orphan'))
-    user = db.relationship('Users', backref=db.backref('messages', cascade='all, delete-orphan'))
-
-class Notifications(db.Model):
-    __tablename__ = 'notifications'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    message = db.Column(db.String(255), nullable=False)
-    read = db.Column(db.Boolean, nullable=False, default=False)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
-
-    # Relationship with Users
-    user = db.relationship('Users', backref='notifications')
 
 class GroupMemberships(db.Model):
     """
@@ -73,3 +49,7 @@ class GroupResources(db.Model):
 
     group = db.relationship('StudyGroups', backref=db.backref('group_resources', cascade='all, delete-orphan'))
     uploaded_by_user = db.relationship('Users', backref=db.backref('uploaded_resources', cascade='all, delete-orphan'))
+
+
+
+

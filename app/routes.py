@@ -62,42 +62,50 @@ def register_routes(app):
                 flash('Group name and privacy are required.', 'danger')
                 return redirect(url_for('create_group'))
 
-            # Create the group
-            new_group = StudyGroups(
-                name=group_name,
-                description=description,
-                privacy=privacy,
-                created_by=user_id
-            )
-            # Generate referral code
-            new_group.generate_referral_code()
+            try:
+                # Create the group
+                new_group = StudyGroups(
+                    name=group_name,
+                    description=description,
+                    privacy=privacy,
+                    created_by=user_id
+                )
+                # Generate referral code
+                new_group.generate_referral_code()
 
-            db.session.add(new_group)
-            db.session.commit()
+                db.session.add(new_group)
+                db.session.commit()
 
-            # Add the creator as an admin
-            new_membership = GroupMemberships(
-                group_id=new_group.id,
-                user_id=user_id,
-                role='admin'
-            )
-            db.session.add(new_membership)
-            db.session.commit()
-             # Fetch the group details from the database
-            group = StudyGroups.query.get(new_group.id)
+                # Add the creator as an admin
+                new_membership = GroupMemberships(
+                    group_id=new_group.id,
+                    user_id=user_id,
+                    role='admin'
+                )
+                db.session.add(new_membership)
+                db.session.commit()
 
-            # Fetch the group members
-            members = GroupMemberships.query.filter_by(group_id=new_group.id).all()
+                # Fetch the group details from the database
+                group = StudyGroups.query.get(new_group.id)
 
-            # Fetch the referral code for the group (if it's private)
-            referral_code = group.referral_code if group.privacy == 'private' else None
+                # Fetch the group members
+                members = GroupMemberships.query.filter_by(group_id=new_group.id).all()
 
-            flash('Group created successfully!', 'success')
-            return render_template('group_detail.html', group=group, members=members, referral_code=referral_code)
+                # Fetch the referral code for the group (if it's private)
+                referral_code = group.referral_code if group.privacy == 'private' else None
 
+                flash('Group created successfully!', 'success')
+                return render_template('group_detail.html', group=group, members=members, referral_code=referral_code)
+
+            except Exception as e:
+                # An error occurred during the commit, rollback the session
+                db.session.rollback()
+                # Log the error for debugging purposes
+                app.logger.error(f"Error creating group: {str(e)}")
+                flash('An error occurred while creating the group.', 'danger')
+                return redirect(url_for('create_group'))
 
         return render_template('create_group.html')
-
 
 
     @app.route('/join_group', methods=['GET', 'POST'])
@@ -158,3 +166,18 @@ def register_routes(app):
 
         # Render the group details template with the group and member information
         return render_template('group_details.html', group=group, members=members, referral_code=referral_code)
+
+
+    @app.route('/search', methods=['GET'])
+    def search():
+        query = request.args.get('search')  # Get the search query from the URL parameters
+        search_results = {'users': [], 'groups': []}
+
+        if query:
+            # Search for users matching the query
+            search_results['users'] = Users.query.filter(Users.username.ilike(f'%{query}%')).all()
+
+            # Search for study groups matching the query
+            search_results['groups'] = StudyGroups.query.filter(StudyGroups.name.ilike(f'%{query}%')).all()
+
+        return render_template('search_results.html', query=query, results=search_results)
