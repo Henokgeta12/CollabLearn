@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Group Study Space</title>
-    <link rel="stylesheet" href="../static/group.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/group.css')}}">
 </head>
 <body>
     <header>
@@ -77,6 +77,9 @@
             <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
         </div>
     </footer>
+    
+    <!-- Include Socket.IO library -->
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 
     <!-- You can add JavaScript here for real-time updates, AJAX requests, etc. -->
     <script src="{{ url_for('static', filename='group.js') }}"></script>

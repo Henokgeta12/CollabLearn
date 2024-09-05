@@ -1,4 +1,4 @@
-from app.extensions import db  # Import extensions
+from app.extensions import db
 import secrets
 
 class StudyGroups(db.Model):
@@ -12,13 +12,16 @@ class StudyGroups(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
     privacy = db.Column(db.String(10), nullable=False, default='public')  # 'public' or 'private'
-    referral_code = db.Column(db.String(50), unique=True, nullable=False, default='')  # Unique referral code
+    referral_code = db.Column(db.String(50), unique=True, nullable=False)
 
     creator = db.relationship('Users', backref=db.backref('study_groups', lazy=True, cascade="all, delete-orphan"))
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.generate_referral_code()
+
     def generate_referral_code(self):
-        # Generate a random referral code
-        self.referral_code = secrets.token_urlsafe(8)  # Generates a URL-safe base64-encoded text string
+        self.referral_code = secrets.token_urlsafe(8)
 
 
 class GroupMemberships(db.Model):
@@ -30,10 +33,11 @@ class GroupMemberships(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('study_groups.id', ondelete='CASCADE'), nullable=False, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
     joined_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
-    role = db.Column(db.String(10), nullable=False, default='member')  # 'admin' or 'member'
+    role = db.Column(db.String(10), nullable=False, default='member')
 
     group = db.relationship('StudyGroups', backref=db.backref('group_memberships', cascade='all, delete-orphan'))
     user = db.relationship('Users', backref=db.backref('group_memberships', cascade='all, delete-orphan'))
+
 
 class GroupResources(db.Model):
     """
@@ -49,7 +53,3 @@ class GroupResources(db.Model):
 
     group = db.relationship('StudyGroups', backref=db.backref('group_resources', cascade='all, delete-orphan'))
     uploaded_by_user = db.relationship('Users', backref=db.backref('uploaded_resources', cascade='all, delete-orphan'))
-
-
-
-
