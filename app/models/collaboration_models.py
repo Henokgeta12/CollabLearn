@@ -54,5 +54,5 @@ class GroupMessages(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
 
-    group = db.relationship('StudyGroups', backref=db.backref('messages', cascade='all, delete-orphan'))
-    user = db.relationship('Users', backref=db.backref('messages', cascade='all, delete-orphan'))
+    group = db.relationship('StudyGroups', backref=db.backref('group_messages', cascade='all, delete-orphan'))
+    user = db.relationship('Users', backref=db.backref('user_messages', cascade='all, delete-orphan'))

@@ -12,8 +12,8 @@
     <div class="join-group-container">
         <h1>Join a Group</h1>
         <form method="POST" action="{{ url_for('join_group') }}">
-            <label for="referral_code">Group Referral Code:</label>
-            <input type="text" id="referral_code" name="referral_code" required>
+            <label for="referral_code">Group Referral Code or Group Name:</label>
+            <input type="text" id="group_identifier" name="group_identifier" required>
             <button type="submit">Join Group</button>
         </form>
         {% with messages = get_flashed_messages(with_categories=true) %}

@@ -2,7 +2,9 @@ from flask import render_template, redirect, url_for, flash,request
 from flask_login import login_user, logout_user, login_required, current_user
 from app.forms import RegistrationForm, LoginForm
 from app.models.user_models import db , Users
-from app.models.group_models import StudyGroups, GroupMemberships
+from app.models.group_models import StudyGroups, GroupMemberships,GroupResources
+from app.models.collaboration_models import  Messages, GroupNotes,GroupTasks,GroupMessages
+from app.models.notification_models import Notifications
 
 def register_routes(app):
     @app.route('/')
@@ -108,64 +110,57 @@ def register_routes(app):
         return render_template('create_group.html')
 
 
+    
     @app.route('/join_group', methods=['GET', 'POST'])
     @login_required
     def join_group():
         if request.method == 'POST':
-            referral_code = request.form.get('referral_code')
+            # Retrieve the form inputs
+            group_identifier = request.form.get('group_identifier')  # This could be the group name (public) or referral code (private)
 
-            # Ensure referral code is provided
-            if not referral_code:
-                flash('Referral code is required to join a group.', 'danger')
+            # Ensure that the user provided the required input
+            if not group_identifier:
+                flash('Group name or referral code is required to join a group.', 'danger')
                 return redirect(url_for('join_group'))
 
-            group = StudyGroups.query.filter_by(referral_code=referral_code).first()
+            # Search for the group by name or referral code
+            group = StudyGroups.query.filter(
+                (StudyGroups.name == group_identifier) | (StudyGroups.referral_code == group_identifier)
+            ).first()
 
             if not group:
-                flash('Group not found with the provided referral code.', 'danger')
+                flash('Group not found with the provided name or referral code.', 'danger')
                 return redirect(url_for('join_group'))
 
-            if group.privacy == 'private':
-                flash('This group is private and cannot be joined without an invitation.', 'danger')
-                return redirect(url_for('join_group'))
+            # Handle joining based on the group's privacy
+            if group.privacy == 'public':
+                # Public group: allow joining by group name
+                if group.name != group_identifier:
+                    flash('Invalid group name for a public group.', 'danger')
+                    return redirect(url_for('join_group'))
 
-            # Check if user is already a member
+            elif group.privacy == 'private':
+                # Private group: ensure referral code is used
+                if group.referral_code != group_identifier:
+                    flash('Invalid referral code for a private group.', 'danger')
+                    return redirect(url_for('join_group'))
+
+            # Check if the user is already a member
             existing_membership = GroupMemberships.query.filter_by(group_id=group.id, user_id=current_user.id).first()
             if existing_membership:
                 flash('You are already a member of this group.', 'info')
-                return redirect(url_for('group_detail', group_id=group.id))
+                return redirect(url_for('group', group_id=group.id))
 
             # Add the user to the group
             new_membership = GroupMemberships(group_id=group.id, user_id=current_user.id, role='member')
             db.session.add(new_membership)
             db.session.commit()
+
             flash('You have successfully joined the group!', 'success')
-            return render_template('group_details.html', group=group, members=members, referral_code=referral_code)
+            return redirect(url_for('group', group_id=group.id))
 
-
-        return render_template('join_group.html')  # Render form for GET requests   
-    @app.route('/group_detail/<int:group_id>', methods=['GET'])
-    @login_required
-    def group_detail(group_id):
-        # Fetch the group from the database using the group ID
-        group = StudyGroups.query.get_or_404(group_id)
-        
-        # Check if the user is a member of the group
-        membership = GroupMemberships.query.filter_by(group_id=group.id, user_id=current_user.id).first()
-
-        # If the group is private and the user is not a member, restrict access
-        if group.privacy == 'private' and not membership:
-            flash('You do not have access to this private group.', 'danger')
-            return redirect(url_for('home'))  # Redirect to home or another accessible page
-
-        # Fetch all members of the group to display
-        members = GroupMemberships.query.filter_by(group_id=group.id).all()
-
-        # Pass the referral code to the template
-        referral_code = group.referral_code
-
-        # Render the group details template with the group and member information
-        return render_template('group_details.html', group=group, members=members, referral_code=referral_code)
+        # Handle GET request, render the join group form
+        return render_template('join_group.html')
 
 
     @app.route('/search', methods=['GET'])
@@ -181,3 +176,26 @@ def register_routes(app):
             search_results['groups'] = StudyGroups.query.filter(StudyGroups.name.ilike(f'%{query}%')).all()
 
         return render_template('search_results.html', query=query, results=search_results)
+
+    
+    @app.route('/group/<int:group_id>', methods=['GET'])
+    @login_required
+    def group(group_id):
+        # Retrieve the group details
+        group = StudyGroups.query.get_or_404(group_id)
+
+        # Check if the current user is a member of the group
+        membership = GroupMemberships.query.filter_by(group_id=group_id, user_id=current_user.id).first()
+        if not membership:
+            flash('You are not a member of this group.', 'danger')
+            return redirect(url_for('home'))
+
+        # Retrieve the messages for the group
+        messages = Messages.query.filter_by(group_id=group_id).order_by(Messages.created_at.asc()).all()
+
+        # Retrieve tasks and group resources
+        tasks = GroupTasks.query.filter_by(group_id=group_id).all()
+        resources = GroupResources.query.filter_by(group_id=group_id).all()
+
+        # Render the group page with the group data
+        return render_template('group.html', group=group, messages=messages, tasks=tasks, resources=resources)
