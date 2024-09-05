@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from config import Config  # Import Config from config.py in the root directory
 from app.models.user_models import Users  # Adjust the import path based on your structure
-from app.extensions import db, login_manager, migrate, socketio  # Import extensions
+from app.extensions import db, login_manager, migrate  # Import extensions
 
 
 
@@ -24,7 +24,7 @@ def create_app(config_class=Config):
 
 
     # Initialize extensions
-    socketio.init_app(app)
+    #socketio.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'login'
