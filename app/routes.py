@@ -5,6 +5,7 @@ from app.models.user_models import db , Users
 from app.models.group_models import StudyGroups, GroupMemberships,GroupResources
 from app.models.collaboration_models import  Messages, GroupNotes,GroupTasks,GroupMessages
 from app.models.notification_models import Notifications
+import os
 
 def register_routes(app):
     @app.route('/')
@@ -196,6 +197,130 @@ def register_routes(app):
         # Retrieve tasks and group resources
         tasks = GroupTasks.query.filter_by(group_id=group_id).all()
         resources = GroupResources.query.filter_by(group_id=group_id).all()
+        group_notes = GroupNotes.query.filter_by(group_id=group_id).first()
 
         # Render the group page with the group data
-        return render_template('group.html', group=group, messages=messages, tasks=tasks, resources=resources)
+        return render_template('group.html', group=group, messages=messages, tasks=tasks, resources=resources, group_notes=group_notes)
+    @app.route('/leave_group/<int:group_id>', methods=['POST'])
+    @login_required
+    def leave_group(group_id):
+        # Retrieve the group and membership details
+        group = StudyGroups.query.get_or_404(group_id)
+        membership = GroupMemberships.query.filter_by(group_id=group_id, user_id=current_user.id).first()
+
+        if not membership:
+            flash('You are not a member of this group.', 'danger')
+            return redirect(url_for('group_detail', group_id=group_id))
+
+        # Remove the user from the group
+        db.session.delete(membership)
+        db.session.commit()
+
+        flash('You have successfully left the group.', 'success')
+        return redirect(url_for('home'))  # Redirect to home or another page
+
+    @app.route('/group/<int:group_id>/send_message', methods=['POST'])
+    @login_required
+    def send_message(group_id):
+        """Handles posting a message to a group."""
+        content = request.form.get('content')  # Get the content from the form
+
+        if not content:
+            flash("Message content cannot be empty.", "error")
+            return redirect(url_for('group', group_id=group_id))
+
+        # Save message to the database
+        new_message = Messages(
+            group_id=group_id,
+            user_id=current_user.id,
+            content=content
+        )
+        db.session.add(new_message)
+        db.session.commit()
+
+        # Emit message to clients in real-time using Socket.IO
+        socketio.emit('receive_message', {
+            'user': current_user.username,
+            'content': content,
+            'created_at': new_message.created_at.strftime('%Y-%m-%d %H:%M')
+        }, room=str(group_id))
+
+        return redirect(url_for('group', group_id=group_id))
+
+    @app.route('/group/<int:group_id>/post_message', methods=['POST'])
+    @login_required
+    def post_message(group_id):
+        """Handles posting a message to a group (alternative endpoint)."""
+        content = request.form.get('content')
+
+        if not content:
+            flash("Message content cannot be empty.", "error")
+            return redirect(url_for('group', group_id=group_id))
+
+        # Save message to the database
+        new_message = Messages(
+            group_id=group_id,
+            user_id=current_user.id,
+            content=content
+        )
+        db.session.add(new_message)
+        db.session.commit()
+
+        # Emit message to clients in real-time using Socket.IO
+        socketio.emit('receive_message', {
+            'user': current_user.username,
+            'content': content,
+            'created_at': new_message.created_at.strftime('%Y-%m-%d %H:%M')
+        }, room=str(group_id))
+
+        return redirect(url_for('group', group_id=group_id))
+
+    @app.route('/group/<int:group_id>/upload_resource', methods=['POST'])
+    @login_required
+    def upload_resource(group_id):
+        """Handles file upload to a specific group."""
+        # Check if a file was submitted
+        if 'file' not in request.files:
+            flash('No file part', 'error')
+            return redirect(url_for('group', group_id=group_id))
+
+        file = request.files['file']
+
+        # If the user does not select a file, browser also submits an empty part without filename
+        if file.filename == '':
+            flash('No selected file', 'error')
+            return redirect(url_for('group', group_id=group_id))
+
+        # Save the file and add it to the database
+        filename = secure_filename(file.filename)  # You might need to import secure_filename from werkzeug.utils
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        # Save resource information to the database
+        new_resource = GroupResources(
+            group_id=group_id,
+            user_id=current_user.id,
+            filename=filename
+        )
+        db.session.add(new_resource)
+        db.session.commit()
+
+        flash('File uploaded successfully!', 'success')
+        return redirect(url_for('group', group_id=group_id))
+
+    @app.route('/group/<int:group_id>/create_task', methods=['POST'])
+    @login_required
+    def create_task(group_id):
+        # Retrieve the group based on group_id
+        group = group.query.get_or_404(group_id)
+
+        # Get task details from the form submission
+        task_title = request.form.get('task_title')
+        task_description = request.form.get('task_description')
+
+        # Create a new task
+        new_task = Task(title=task_title, description=task_description, group_id=group_id)
+        db.session.add(new_task)
+        db.session.commit()
+
+        # Redirect back to the group page
+        return redirect(url_for('group', group_id=group_id))

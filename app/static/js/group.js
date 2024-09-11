@@ -1,7 +1,7 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 
 // Join the room
-socket.emit('join', {'group_id': {{ group.id }}});
+socket.emit('join', {'group_id': "{{ group.id }}"});
 
 // Listen for incoming messages
 socket.on('receive_message', function(data) {
@@ -14,9 +14,19 @@ socket.on('receive_message', function(data) {
 
 // Handle form submission
 var form = document.querySelector('form');
-form.onsubmit = function(event) {
+form.onsubmit = function(event) 
+{
     event.preventDefault();
     var content = document.querySelector('textarea[name="content"]').value;
-    socket.emit('send_message', {'group_id': {{ group.id }}, 'content': content});
+    socket.emit('send_message', { group_id: group.id, content: content }, function(ack) {
+        console.log('Message acknowledged by server:', ack);
+    });
     form.reset();
 };
+
+socket.on('disconnect', function() {
+    alert('You have been disconnected from the chat.');
+}); 
+socket.on('error', function(data) {
+    alert('Error: ' + data.error);
+});

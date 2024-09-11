@@ -53,7 +53,7 @@
         <!-- Group Notes Section -->
         <section id="notes">
             <h2>Group Notes</h2>
-            <textarea id="group-notes" placeholder="Collaborate on group notes...">{{ group_notes.content }}</textarea>
+            <textarea id="group-notes" placeholder="Collaborate on group notes...">{{ group_notes.content if group_notes else ''}}</textarea>
             <button id="save-notes">Save Notes</button>
         </section>
 
