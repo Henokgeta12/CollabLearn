@@ -1,4 +1,5 @@
-from app.extensions import db 
+from ..extensions import db 
+
 class Messages(db.Model):
     """
     Represents a message posted within a study group.

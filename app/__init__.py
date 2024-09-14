@@ -1,10 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
-from config import Config  # Import Config from config.py in the root directory
-from app.models.user_models import Users  # Adjust the import path based on your structure
-from app.extensions import db, login_manager, migrate  # Import extensions
-
+from .extensions import db, login_manager, migrate
+from .models.user_models import Users
+from CollabLearn.config import Config  
 
 
 
@@ -19,12 +17,10 @@ def create_app(config_class=Config):
     Returns:
         Flask: The created Flask application instance.
     """
-    app = Flask(__name__,template_folder="templates")
+    app = Flask(__name__, template_folder="templates")
     app.config.from_object(Config)
 
-
     # Initialize extensions
-    #socketio.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'login'
@@ -36,7 +32,7 @@ def create_app(config_class=Config):
 
     # Register routes
     with app.app_context():
-        from app.routes import register_routes  # Import and register routes
+        from .routes import register_routes  # Import and register routes
         register_routes(app)
 
     return app

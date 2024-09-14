@@ -1,10 +1,10 @@
 from flask import render_template, redirect, url_for, flash,request
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import RegistrationForm, LoginForm
-from app.models.user_models import db , Users
-from app.models.group_models import StudyGroups, GroupMemberships,GroupResources
-from app.models.collaboration_models import  Messages, GroupNotes,GroupTasks,GroupMessages
-from app.models.notification_models import Notifications
+from .forms import RegistrationForm, LoginForm
+from .models.user_models import db , Users
+from .models.group_models import StudyGroups, GroupMemberships,GroupResources
+from .models.collaboration_models import  Messages, GroupNotes,GroupTasks,GroupMessages
+from .models.notification_models import Notifications
 import os
 
 def register_routes(app):
@@ -187,7 +187,7 @@ def register_routes(app):
 
         # Check if the current user is a member of the group
         membership = GroupMemberships.query.filter_by(group_id=group_id, user_id=current_user.id).first()
-        if not membership:
+        if current_user not in group.members:
             flash('You are not a member of this group.', 'danger')
             return redirect(url_for('home'))
 
@@ -311,16 +311,26 @@ def register_routes(app):
     @login_required
     def create_task(group_id):
         # Retrieve the group based on group_id
-        group = group.query.get_or_404(group_id)
+        group = StudyGroups.query.get_or_404(group_id)
 
         # Get task details from the form submission
-        task_title = request.form.get('task_title')
         task_description = request.form.get('task_description')
 
         # Create a new task
-        new_task = Task(title=task_title, description=task_description, group_id=group_id)
+        new_task = GroupTasks(task_description=task_description, group_id=group_id)
         db.session.add(new_task)
         db.session.commit()
+
+        for member in group.members:
+            if member.id != current_user.id:
+                notification = Notifications(
+                    user_id=member.id,
+                    message=f"{current_user.username} added a new task in {group.name}: {task_description}"
+                )
+                db.session.add(notification)
+
+        db.session.commit()
+        flash('Task created successfully!', 'success')
 
         # Redirect back to the group page
         return redirect(url_for('group', group_id=group_id))

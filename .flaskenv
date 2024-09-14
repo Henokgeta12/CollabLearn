@@ -1,3 +1,3 @@
-FLASK_APP=app
+FLASK_APP=run.py
 FLASK_ENV=development
-DATABASE_URL=mysql+pymysql://root:henok123@localhost/Development_CollabStudyDB
+FLASK_APP=run.py
