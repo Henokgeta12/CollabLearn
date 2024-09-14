@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, EmailField, BooleanField
 from wtforms.validators import InputRequired, Length, Email, EqualTo, ValidationError, Regexp
-from app.models.user_models import Users  # Import your Users model to check for existing users
+from .models.user_models import Users  # Import your Users model to check for existing users
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[
@@ -12,7 +12,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[
         InputRequired(message="Password is required"), 
         Length(min=6, message="Password must be at least 6 characters"),
-        Regexp('^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$', 
+        Regexp('^(?=.*)(?=.*[a-z])(?=.*[A-Z]).{6,}$', 
                message="Password must contain at least one uppercase letter, one lowercase letter, and one digit")
     ])
     confirm_password = PasswordField('Confirm Password', validators=[
