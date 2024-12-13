@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 <body>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}    
+            {% endif %}
+        {% endwith %}
+    </div>
     <!-- Header Section -->
     <header>
         <div class="container">
@@ -14,7 +24,8 @@
             <div class="user-info">
                 {% if current_user.is_authenticated %}
                     <!-- Display the logged-in user's username -->
-                    <p>Welcome, <span id="username">{{ current_user.username }}</span></p>
+                    
+                    <p>Welcome, <span id="username">{{ current_user.username }}</span></p><br>
                     <form action="{{ url_for('logout') }}" method="post">
                         <button type="submit" id="logout">Logout</button>
                     </form>

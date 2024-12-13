@@ -6,7 +6,16 @@ body {
     padding: 0;
     background-color: #f4f4f4;
 }
+.home{
+    background-color: #007bff;
+    display: inline-block;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+    color: white;
 
+}
 .group-details-container {
     max-width: 800px;
     margin: 50px auto;

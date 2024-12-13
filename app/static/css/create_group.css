@@ -5,7 +5,20 @@ body {
     padding: 0;
     background-color: #f5f5f5;
 }
+.flash-messages {
+    font-size: 0.8em;   
+    margin-top: 5px;    
+}
+.home{
+    background-color: #f44336;
+    display: inline-block;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+    color: white;
 
+}
 header {
     background-color: #4CAF50;
     color: white;
