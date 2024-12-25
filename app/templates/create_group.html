@@ -22,9 +22,14 @@
     <!-- Header Section -->
     <header>
         <div class="container">
+           
             <h1>Create a New Group</h1>
             <div class="user-info">
                 <p>Welcome, <span id="username">{{ current_user.username }}</span></p>
+                <form action="{{ url_for('home')}}" method="POST" >
+                    <button type="submit" class="home"> Home</button>
+                </form><br>
+                
                 <form action="{{ url_for('logout') }}" method="POST">
                     <button type="submit" id="logout">Logout</button>
                 </form>           

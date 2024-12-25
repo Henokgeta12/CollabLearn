@@ -1,4 +1,9 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from .extensions import db, login_manager, migrate
+from .models import Users
+from config import Config  
+
 from app.extensions import db, login_manager, migrate
 from .models.user_models import Users
 from config import Config

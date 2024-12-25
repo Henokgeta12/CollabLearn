@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, EmailField, BooleanField
 from wtforms.validators import InputRequired, Length, Email, EqualTo, ValidationError, Regexp
-from .models.user_models import Users  # Import your Users model to check for existing users
+from .models import Users  # Import your Users model to check for existing users
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[
@@ -13,7 +13,7 @@ class RegistrationForm(FlaskForm):
         InputRequired(message="Password is required"), 
         Length(min=6, message="Password must be at least 6 characters"),
         Regexp('^(?=.*)(?=.*[a-z])(?=.*[A-Z]).{6,}$', 
-               message="Password must contain at least one uppercase letter, one lowercase letter, and one digit")
+        message="Password must contain at least one uppercase letter, one lowercase letter, and one digit")
     ])
     confirm_password = PasswordField('Confirm Password', validators=[
         InputRequired(message="Please confirm your password"), 
@@ -31,16 +31,16 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Username is already taken. Please choose a different one.')
 
     def validate_email(self, email):
-        user = Users.query.filter_by(email=email.data).first()
+        user = Users.query.filter_by(email=email.data.lower()).first() 
         if user:
             raise ValidationError('Email is already registered. Please use a different email address.')
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[
         InputRequired(message="Username is required")
-    ], render_kw={'autofocus': True})
+    ], render_kw={'autofocus': True ,'autocomplete': 'off'})
     password = PasswordField('Password', validators=[
         InputRequired(message="Password is required")
-    ])
+    ],render_kw={'autocomplete': 'off'})
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')

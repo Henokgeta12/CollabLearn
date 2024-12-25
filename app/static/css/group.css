@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-    width: 90%;
+    width: 80%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
@@ -146,4 +146,53 @@ footer {
     padding: 20px 0;
     text-align: center;
     margin-top: 20px;
+}
+/* Flash Messages */
+.flashes {
+    list-style: none;
+    padding: 0;
+}
+
+.flashes li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.flashes .success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.flashes .error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Task Management */
+#tasks ul {
+    list-style: none;
+    padding: 0;
+}
+
+#tasks li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+#tasks h3 {
+    margin-top: 20px;
+}
+
+#tasks form {
+    display: inline;
+}
+.current-status-label {
+    margin-left: 10px;
+    color: #555;
+    font-style: italic;
+}
+
+.current-status-label strong {
+    color: #000;
 }

@@ -12,7 +12,7 @@ def register_routes(app):
     def welcome():
         return render_template('welcome.html')
 
-    @app.route('/home')
+    @app.route('/home',methods=['GET', 'POST'])
     @login_required
     def home():
         return render_template('home.html')
@@ -212,11 +212,16 @@ def register_routes(app):
             flash('You are not a member of this group.', 'danger')
             return redirect(url_for('group_detail', group_id=group_id))
 
-        # Remove the user from the group
-        db.session.delete(membership)
-        db.session.commit()
+        try:
+            # Remove the user from the group
+            db.session.delete(membership)
+            db.session.commit()
+            flash('You have successfully left the group.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred while leaving the group: {str(e)}', 'danger')
+            return redirect(url_for('group_detail', group_id=group_id))
 
-        flash('You have successfully left the group.', 'success')
         return redirect(url_for('home'))  # Redirect to home or another page
 
     @app.route('/group/<int:group_id>/send_message', methods=['POST'])
@@ -333,4 +338,24 @@ def register_routes(app):
         flash('Task created successfully!', 'success')
 
         # Redirect back to the group page
+        return redirect(url_for('group', group_id=group_id))
+
+    @app.route('/group/<int:group_id>/tasks/<int:task_id>/update_status', methods=['POST'])
+    @login_required
+    def update_task_status(group_id, task_id):
+        task = GroupTasks.query.get_or_404(task_id)
+
+        # Ensure the task belongs to the group
+        if task.group_id != group_id:
+            abort(403)
+
+        # Get the new status from the form
+        new_status = request.form.get('status')
+        if new_status in ['pending', 'in_progress', 'completed']:
+            task.status = new_status
+            db.session.commit()
+            flash('Task status updated!', 'success')
+        else:
+            flash('Invalid status provided.', 'error')
+
         return redirect(url_for('group', group_id=group_id))

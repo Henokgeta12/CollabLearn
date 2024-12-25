@@ -15,6 +15,11 @@ class StudyGroups(db.Model):
     referral_code = db.Column(db.String(50), unique=True, nullable=False)
 
     creator = db.relationship('Users', backref=db.backref('study_groups', lazy=True, cascade="all, delete-orphan"))
+    members = db.relationship(
+        'Users',
+        secondary='group_memberships',
+        backref=db.backref('groups', lazy='dynamic')
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
