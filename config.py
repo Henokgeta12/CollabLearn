@@ -2,14 +2,14 @@ import os
 
 class Config:
     """Base configuration."""
-    SECRET_KEY = os.environ.get('SECRET_KEY') 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SECRET_KEY = 'henokassfaw'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:henok123@localhost/development_collab_studydb'  # Corrected the dialect
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DEBUG =True
+    DEBUG = True
     TESTING = False
+
     #JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your_jwt_secret_key_here'
     # Add any other configurations you need here
-
 
 class DevelopmentConfig(Config):
     """Development configuration."""

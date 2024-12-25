@@ -1,11 +1,5 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from .extensions import db, login_manager, migrate
-from .models import Users
-from config import Config  
-
-from app.extensions import db, login_manager, migrate
-from .models.user_models import Users
 from config import Config
 
 
@@ -31,6 +25,7 @@ def create_app(config_class=Config):
 
     @login_manager.user_loader
     def load_user(user_id):
+        from .models.user_models import Users
         return Users.query.get(int(user_id))
 
     # Register routes
