@@ -16,6 +16,10 @@ def create_app(config_class=Config):
     """
     app = Flask(__name__, template_folder="templates")
     app.config.from_object(config_class)
+    app.config['UPLOAD_FOLDER'] = 'static/user_profile_pic'
+    app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # Limit upload size to 2MB
+
+
 
     # Initialize extensions
     db.init_app(app)

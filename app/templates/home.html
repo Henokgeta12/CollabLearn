@@ -33,6 +33,12 @@
                     <p>Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
                 {% endif %}
             </div>
+            <div class="account">
+                   <!-- Create Group Form -->
+                   <form action="{{ url_for('account') }}" method="get">
+                    <button type="submit" >Account</button>
+                </form>
+            </div>
         </div>
     </header>
 

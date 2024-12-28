@@ -1,10 +1,13 @@
 from flask import render_template, redirect, url_for, flash,request
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, UpdateProfileForm , Update_Acc_Form
 from .models.user_models import db , Users
 from .models.group_models import StudyGroups, GroupMemberships,GroupResources
 from .models.collaboration_models import  Messages, GroupNotes,GroupTasks,GroupMessages
 from .models.notification_models import Notifications
+from .extensions import allowed_file
+from werkzeug.utils import secure_filename
+
 import os
 
 def register_routes(app):
@@ -12,7 +15,7 @@ def register_routes(app):
     def welcome():
         return render_template('welcome.html')
 
-    @app.route('/home',methods=['GET', 'POST'])
+    @app.route('/home')
     @login_required
     def home():
         return render_template('home.html')
@@ -183,7 +186,7 @@ def register_routes(app):
     @login_required
     def group(group_id):
         # Retrieve the group details
-        group = StudyGroups.query.get_or_404(group_id)
+        group = StudyGroups.query.get_or_404(group_id).first()
 
         # Check if the current user is a member of the group
         membership = GroupMemberships.query.filter_by(group_id=group_id, user_id=current_user.id).first()
@@ -219,8 +222,8 @@ def register_routes(app):
             flash('You have successfully left the group.', 'success')
         except Exception as e:
             db.session.rollback()
-            flash(f'An error occurred while leaving the group: {str(e)}', 'danger')
-            return redirect(url_for('group_detail', group_id=group_id))
+            flash('An error occurred while leaving the group: {str(e)}','danger')
+            return redirect(url_for('group_detail',group_id = group_id ))
 
         return redirect(url_for('home'))  # Redirect to home or another page
 
@@ -339,23 +342,44 @@ def register_routes(app):
 
         # Redirect back to the group page
         return redirect(url_for('group', group_id=group_id))
-
-    @app.route('/group/<int:group_id>/tasks/<int:task_id>/update_status', methods=['POST'])
+    
+    @app.route('/account', methods=['GET','PUT'])
     @login_required
-    def update_task_status(group_id, task_id):
-        task = GroupTasks.query.get_or_404(task_id)
-
-        # Ensure the task belongs to the group
-        if task.group_id != group_id:
-            abort(403)
-
-        # Get the new status from the form
-        new_status = request.form.get('status')
-        if new_status in ['pending', 'in_progress', 'completed']:
-            task.status = new_status
+    def account():
+        img_file = url_for('static',filename='user_profile_pic/' + current_user.profile_img)
+        form = UpdateProfileForm()
+        if form.validate_on_submit():
+            username = form.username.data
+        return render_template('account.html',img_file = img_file)
+    
+    @app.route('/update_profile', methods=['GET', 'PUT'])
+    @login_required
+    def update_profile():
+        profile_form = UpdateProfileForm()
+        account_form = Update_Acc_Form()
+        if request.method == 'PUT' and profile_form.validate_on_submit():
+            if 'profile_img' in request.files:
+                file = request.files['profile_img']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
+                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                    file.save(filepath)
+                    current_user.update_profile_img(unique_filename)
+                    db.session.commit()
+                    flash('Profile image updated successfully!', 'success')
+                    return redirect(url_for('account'))
+                else:
+                    flash('Invalid file type. Please upload a valid image file.', 'error')
+            else:
+                flash('No file selected. Please select a file to upload.', 'error')
+        else request.method == 'POST' and account_form.validate_on_submit():
+            current_user.username = account_form.username.data
+            current_user.email = account_form.email.data
             db.session.commit()
-            flash('Task status updated!', 'success')
-        else:
-            flash('Invalid status provided.', 'error')
+            flash('Account information updated successfully!', 'success')
+            return redirect(url_for('account'))
+        return render_template('update_profile.html', account_form=account_form,profile_form=profile_form )
 
-        return redirect(url_for('group', group_id=group_id))
+
+

@@ -123,3 +123,28 @@ footer {
 footer p {
     margin: 0;
 }
+
+.account button {
+    background-color: #e8491d;
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Reduced padding */
+    cursor: pointer;
+    font-size: 14px; /* Reduced font size */
+    border-radius: 5px;
+    margin: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: 100px; /* Reduced width */
+    height: 40px; /* Reduced height */
+    font-family: Arial, sans-serif;
+}
+
+.account button:hover {
+    background-color: #d33f1a; /* Darker shade for hover effect */
+    transform: scale(1.05); /* Slightly enlarge the button on hover */
+}
+
+.account {
+    float: right;
+}
