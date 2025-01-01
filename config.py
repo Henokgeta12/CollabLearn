@@ -32,4 +32,3 @@ class TestingConfig(Config):
 
 
 
-henok = Config()
