@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash,request
+from flask import render_template, redirect, url_for, flash,request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from .forms import RegistrationForm, LoginForm, UpdateProfileForm , Update_Acc_Form
 from .models.user_models import db , Users
@@ -7,7 +7,7 @@ from .models.collaboration_models import  Messages, GroupNotes,GroupTasks,GroupM
 from .models.notification_models import Notifications
 from .extensions import allowed_file
 from werkzeug.utils import secure_filename
-
+from datetime import datetime
 import os
 
 def register_routes(app):
@@ -343,27 +343,26 @@ def register_routes(app):
         # Redirect back to the group page
         return redirect(url_for('group', group_id=group_id))
     
-    @app.route('/account', methods=['GET','PUT'])
+    @app.route('/account', methods=['GET', 'POST'])
     @login_required
     def account():
-        img_file = url_for('static',filename='user_profile_pic/' + current_user.profile_img)
-        form = UpdateProfileForm()
-        if form.validate_on_submit():
-            username = form.username.data
-        return render_template('account.html',img_file = img_file)
-    
-    @app.route('/update_profile', methods=['GET', 'PUT'])
-    @login_required
-    def update_profile():
+        img_file = url_for('static', filename='user_profile-pic/' + current_user.profile_img)
         profile_form = UpdateProfileForm()
         account_form = Update_Acc_Form()
-        if request.method == 'PUT' and profile_form.validate_on_submit():
+        if request.method == 'GET':
+            account_form.username.data = current_user.username
+            account_form.email.data = current_user.email 
+            
+        if request.method == 'POST' and profile_form.validate_on_submit():
             if 'profile_img' in request.files:
                 file = request.files['profile_img']
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
-                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                    upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+                    os.makedirs(upload_folder, exist_ok=True)
+                    filepath = os.path.join(upload_folder, unique_filename)
+                    print(f"Saving file to: {filepath}")
                     file.save(filepath)
                     current_user.update_profile_img(unique_filename)
                     db.session.commit()
@@ -373,13 +372,30 @@ def register_routes(app):
                     flash('Invalid file type. Please upload a valid image file.', 'error')
             else:
                 flash('No file selected. Please select a file to upload.', 'error')
-        else request.method == 'POST' and account_form.validate_on_submit():
+        return render_template('account.html', img_file=img_file, profile_form=profile_form, account_form=account_form)
+
+    @app.route('/update_profile', methods=['GET', 'POST'])
+    @login_required
+    def update_profile():
+        profile_form = UpdateProfileForm()
+        account_form = Update_Acc_Form()
+        if request.method == 'POST' and account_form.validate_on_submit():
             current_user.username = account_form.username.data
             current_user.email = account_form.email.data
             db.session.commit()
             flash('Account information updated successfully!', 'success')
             return redirect(url_for('account'))
-        return render_template('update_profile.html', account_form=account_form,profile_form=profile_form )
+
+        return render_template('update_profile.html', account_form=account_form, profile_form=profile_form)
 
 
-
+    @app.route('/get_account_info', methods=['GET'])
+    @login_required
+    def get_account_info():
+        img_file = url_for('static', filename='user_profile_pic/' + current_user.profile_img)
+        account_info = {
+            'username': current_user.username,
+            'email': current_user.email,
+            'img_file': img_file
+        }
+        return jsonify(account_info)

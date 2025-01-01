@@ -12,12 +12,6 @@ class Config:
     TESTING = False
 
     
-    def __init__(self):
-        print(f"SECRET_KEY: {self.SECRET_KEY}")
-        print(f"SQLALCHEMY_DATABASE_URI: {self.SQLALCHEMY_DATABASE_URI}")
-
-    #JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your_jwt_secret_key_here'
-    # Add any other configurations you need here
 
 class DevelopmentConfig(Config):
     """Development configuration."""

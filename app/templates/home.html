@@ -4,77 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collaborative Study Platform</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 <body>
-
-    <div class="flash-messages">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}    
-            {% endif %}
-        {% endwith %}
-    </div>
-    <!-- Header Section -->
-    <header>
-        <div class="container">
-            <h1>Collaborative Study Platform</h1>
-            <div class="user-info">
-                {% if current_user.is_authenticated %}
-                    <!-- Display the logged-in user's username -->
-                    
-                    <p>Welcome, <span id="username">{{ current_user.username }}</span></p><br>
-                    <form action="{{ url_for('logout') }}" method="post">
-                        <button type="submit" id="logout">Logout</button>
-                    </form>
-                {% else %}
-                    <p>Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
+    <div class="container mt-5">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
                 {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Header Section -->
+        <header class="mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <h1 class="display-4">Collaborative Study Platform</h1>
+                </div>
+                <div class="col-md-4 text-right">
+                    {% if current_user.is_authenticated %}
+                        <p class="lead">Welcome, <span id="username">{{ current_user.username }}</span></p>
+                        <form action="{{ url_for('logout') }}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    {% else %}
+                        <p class="lead">Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="account">
-                   <!-- Create Group Form -->
-                   <form action="{{ url_for('account') }}" method="get">
-                    <button type="submit" >Account</button>
+            <div class="account mt-3">
+                <form action="{{ url_for('account') }}" method="get" class="d-inline">
+                    <button type="submit" class="btn btn-primary">Account</button>
                 </form>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Content Section -->
-    <main>
-        <div class="container">
-            <div class="search-section">
-                <!-- Search Bar -->
-                 <form action="{{ url_for('search') }}" method="get">
-                    <label for="search">Search:</label>
-                    <input type="text" id="search" name = "search" placeholder="Search Groups or Users...">
-                    <button>Search</button>
-                 </form>
+        <!-- Main Content Section -->
+        <main>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="search-section mb-4">
+                        <form action="{{ url_for('search') }}" method="get" class="form-inline">
+                            <label for="search" class="mr-2">Search:</label>
+                            <input type="text" id="search" name="search" class="form-control mr-2" placeholder="Search Groups or Users...">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </form>
+                    </div>
+
+                    <div class="group-actions">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <form action="{{ url_for('create_group') }}" method="post">
+                                    <button type="submit" class="btn btn-success btn-block">Create Group</button>
+                                </form>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <form action="{{ url_for('join_group') }}" method="post">
+                                    <button type="submit" class="btn btn-info btn-block">Join Group</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </main>
 
-            <div class="group-actions">
-                <!-- Create Group Form -->
-                <form action="{{ url_for('create_group') }}" method="post">
-                    <!-- Include necessary fields here -->
-                    <button type="submit" id="create-group">Create Group</button>
-                </form>
-
-                <!-- Join Group Form -->
-                <form action="{{ url_for('join_group') }}" method="post">
-                    <!-- Include necessary fields here -->
-                    <button type="submit" id="join-group">Join Group</button>
-                </form>
+        <!-- Footer Section -->
+        <footer class="mt-5">
+            <div class="container">
+                <p class="text-center">&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
             </div>
-        </div>
-    </main>
+        </footer>
+    </div>
 
-    <!-- Footer Section -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
-        </div>
-    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

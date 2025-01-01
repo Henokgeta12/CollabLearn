@@ -3,51 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">
-    <title>Account</title>
+    <title>Welcome to Collab Study Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}"> -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .hero {
+            background: linear-gradient(135deg, #6b73ff 0%, #000dff 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .navbar {
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #343a40 !important;
+        }
+        .nav-link {
+            font-weight: 500;
+            color: #343a40 !important;
+        }
+        .description {
+            margin: 40px 0;
+            text-align: center;
+        }
+        .description p {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        .footer p {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="account_section">
-        <img class="rounded-circle account-img" src="{{ img_file }}" alt="Profile Picture">
-        <h2 class="account-heading">{{ current_user.username }}</h2>
-        <p class="text-secondary">{{ current_user.email }}</p>
-
-        <form method="POST" enctype="multipart/form-data">
-            {{ profile_form.hidden_tag() }}
-            <div class="form-group">
-                {{ profile_form.profile_img.label }}<br>
-                {{ profile_form.profile_img(size=32) }}<br>
-                {% for error in profile_form.profile_img.errors %}
-                    <span class="error-message">[{{ error }}]</span>
-                {% endfor %}
+    <div class="container-fluid p-0">
+        <header class="hero">
+            <div class="hero-overlay">
+                <h1>Welcome to Collab Study Platform</h1>
             </div>
-            <div class="form-group">
-                {{ profile_form.submit(class="btn btn-primary") }}
-            </div>
-        </form>
+        </header>
 
-        <div class="update_acc_form">
-            <form method="POST">
-                {{ account_form.hidden_tag() }}
-                <div class="form-group">
-                    {{ account_form.username.label }}<br>
-                    {{ account_form.username(size=32) }}<br>
-                    {% for error in account_form.username.errors %}
-                        <span class="error-message">[{{ error }}]</span>
-                    {% endfor %}
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">Collab Study Platform</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="form-group">
-                    {{ account_form.email.label }}<br>
-                    {{ account_form.email(size=32) }}<br>
-                    {% for error in account_form.email.errors %}
-                        <span class="error-message">[{{ error }}]</span>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    {{ account_form.submit(class="btn btn-primary") }}
-                </div>
-            </form>
-        </div>
+            </div>
+        </nav>
+
+        <section class="description container">
+            <p>Collab Study Platform is your go-to place for creating and joining study groups. Whether you want to collaborate with peers or manage study sessions, our platform offers the tools you need to succeed.</p>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2024 Collab Study Platform. All rights reserved.</p>
+        </footer>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
