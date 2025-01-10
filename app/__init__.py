@@ -1,6 +1,8 @@
 from flask import Flask
 from .extensions import db, login_manager, migrate
 from config import Config
+from flask_wtf.csrf import CSRFProtect
+
 
 
 def create_app(config_class=Config):
@@ -16,9 +18,10 @@ def create_app(config_class=Config):
     """
     app = Flask(__name__, template_folder="templates")
     app.config.from_object(config_class)
+    Config.init_app(app)
     app.config['UPLOAD_FOLDER'] = 'static/user_profile-pic'
-    #app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # Limit upload size to 2MB
-
+    # app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # Limit upload size to 2MB
+    CSRFProtect(app)
 
 
     # Initialize extensions
