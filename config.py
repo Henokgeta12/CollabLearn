@@ -1,10 +1,21 @@
 import os
 from dotenv import load_dotenv
+import logging
+
 
 load_dotenv()
 
 class Config:
     """Base configuration."""
+    LOGGING_LEVEL = logging.ERROR
+
+    @staticmethod
+    def init_app(app):
+        logging.basicConfig(level=Config.LOGGING_LEVEL)
+        logger = logging.getLogger(__name__)
+        app.logger.handlers = logger.handlers
+        app.logger.setLevel(logger.level)
+        
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
