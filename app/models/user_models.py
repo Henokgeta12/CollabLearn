@@ -51,6 +51,15 @@ class Users(db.Model,UserMixin):
         """
         self.profile_img = img
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'created_at': self.created_at.isoformat(),  # Convert datetime to ISO format
+            'last_login': self.created_at.isoformat(),
+        }
+    
 
     def __repr__(self):
         return f'<User {self.username} ({self.email})>'

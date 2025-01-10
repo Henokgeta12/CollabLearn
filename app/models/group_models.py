@@ -27,6 +27,17 @@ class StudyGroups(db.Model):
 
     def generate_referral_code(self):
         self.referral_code = secrets.token_urlsafe(8)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'created_by': self.created_by,
+            'created_at': self.created_at.isoformat(),  # Convert datetime to ISO format
+            'privacy': self.privacy,
+            'referral_code': self.referral_code
+        }
 
 
 class GroupMemberships(db.Model):
