@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, EmailField, BooleanField
-from wtforms.validators import InputRequired, Length, Email, EqualTo, ValidationError, Regexp
+from wtforms import StringField, PasswordField, SubmitField, EmailField, BooleanField, TextAreaField, SelectField,HiddenField
+from wtforms.validators import InputRequired, Length, Email, EqualTo, ValidationError, Regexp,DataRequired
 from .models import Users  # Import your Users model to check for existing users
 
 class RegistrationForm(FlaskForm):
@@ -60,13 +60,13 @@ class Update_Acc_Form(FlaskForm):
     submit = SubmitField('Update')
 
     def validate_username(self, username):
-        if current_user.username != usernmae.data:
+        if current_user.username != username.data:
             user = Users.query.filter_by(username=username.data).first()
             if user:
                 raise ValidationError('Username is already taken. Please choose a different one.')
 
     def validate_email(self, email):
-        if current_user.username != email.data:
+        if current_user.email != email.data:
             user = Users.query.filter_by(email=email.data.lower()).first() 
             if user:
                 raise ValidationError('Email is already registered. Please use a different email address.')
@@ -76,3 +76,65 @@ class UpdateProfileForm(FlaskForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Images only!'),
     ])
     submit = SubmitField('Update')
+
+class JoinGroupForm(FlaskForm):
+    group_identifier = StringField('Group Name or Referral Code', validators=[DataRequired()])
+    submit = SubmitField('Join Group')
+
+
+class CreateGroupForm(FlaskForm):
+    group_name = StringField(
+        "Group Name",
+        validators=[
+            DataRequired(message="Group Name is required."),
+            Length(max=100, message="Group Name must be less than 100 characters.")
+        ],
+        render_kw={"class": "form-control", "id": "group-name", "required": True}
+    )
+    group_description = TextAreaField(
+        "Group Description",
+        render_kw={"class": "form-control", "id": "group-description"}
+    )
+    group_visibility = SelectField(
+        "Group Visibility",
+        choices=[
+            ("", "Select Visibility"),  # Default disabled option
+            ("public", "Public"),
+            ("private", "Private")
+        ],
+        validators=[DataRequired(message="Group Visibility is required.")],
+        render_kw={"class": "form-control", "id": "group-visibility"}
+    )
+    submit = SubmitField(
+        "Create Group",
+        render_kw={"class": "btn btn-primary"}
+    )
+
+class JoinGroupForm(FlaskForm):
+    group_id = HiddenField('Group ID')
+    referral_code = HiddenField('Referral Code')
+
+class MessageForm(FlaskForm):
+    content = TextAreaField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send')
+
+class UploadResourceForm(FlaskForm):
+    file = FileField('File', validators=[DataRequired()])
+    submit = SubmitField('Upload')
+
+class TaskForm(FlaskForm):
+    task_description = StringField('Task Description', validators=[DataRequired()])
+    submit = SubmitField('Add Task')
+
+class UpdateTaskStatusForm(FlaskForm):
+    status = SelectField('Status', choices=[('pending', 'Pending'), ('in_progress', 'In Progress'), ('completed', 'Completed')])
+    submit = SubmitField('Update Status')
+
+class GroupNotesForm(FlaskForm):
+    content = TextAreaField('Group Notes', validators=[DataRequired()])
+    submit = SubmitField('Save Notes')
+
+class JoinGroupForm(FlaskForm):
+    group_id = HiddenField('Group ID', validators=[DataRequired()])
+    referral_code = StringField('Referral Code', validators=[DataRequired()])
+    submit = SubmitField('Join Group')
