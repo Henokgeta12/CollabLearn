@@ -5,84 +5,177 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collaborative Study Platform</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/home.css') }}">
+
 </head>
 <body>
+    <!-- Header Section -->
+    <header class="header text-center">
+        <div class="container">
+            <h1>Collaborative Study Platform</h1>
+            <p class="lead">A place to create, join, and collaborate in study groups.</p>
+        </div>
+    </header>
+
     <div class="container mt-5">
+        <!-- Flash Messages -->
         <div class="flash-messages">
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-info">{{ message }}</div>
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}
         </div>
 
-        <!-- Header Section -->
-        <header class="mb-4">
-            <div class="row">
-                <div class="col-md-8">
-                    <h1 class="display-4">Collaborative Study Platform</h1>
-                </div>
-                <div class="col-md-4 text-right">
-                    {% if current_user.is_authenticated %}
-                        <p class="lead">Welcome, <span id="username">{{ current_user.username }}</span></p>
-                        <form action="{{ url_for('logout') }}" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-danger">Logout</button>
-                        </form>
-                    {% else %}
-                        <p class="lead">Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
-                    {% endif %}
-                </div>
+        <!-- User Session Actions -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                {% if current_user.is_authenticated %}
+                    <p class="lead">Welcome, <strong id="username">{{ current_user.username }}</strong></p>
+                {% else %}
+                    <p class="lead">Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
+                {% endif %}
             </div>
-            <div class="account mt-3">
-                <form action="{{ url_for('account') }}" method="get" class="d-inline">
-                    <button type="submit" class="btn btn-primary">Account</button>
-                </form>
+            <div class="col-md-4 text-right">
+                {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('logout') }}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                    </form>
+                    <form action="{{ url_for('account') }}" method="get" class="d-inline">
+                        <button type="submit" class="btn btn-primary btn-sm">Account</button>
+                    </form>
+                {% endif %}
             </div>
-        </header>
+        </div>
 
-        <!-- Main Content Section -->
-        <main>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="search-section mb-4">
-                        <form action="{{ url_for('search') }}" method="get" class="form-inline">
-                            <label for="search" class="mr-2">Search:</label>
-                            <input type="text" id="search" name="search" class="form-control mr-2" placeholder="Search Groups or Users...">
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </form>
-                    </div>
-
-                    <div class="group-actions">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <form action="{{ url_for('create_group') }}" method="post">
-                                    <button type="submit" class="btn btn-success btn-block">Create Group</button>
-                                </form>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <form action="{{ url_for('join_group') }}" method="post">
-                                    <button type="submit" class="btn btn-info btn-block">Join Group</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Group Actions Section -->
+        <section class="group-actions text-center">
+            <h2 class="mb-4">Group Actions</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <form action="{{ url_for('create_group') }}" method="post">
+                        <button type="submit" class="btn btn-success">Create a New Group</button>
+                    </form>
+                </div>
+                <div class="col-md-5">
+                    <form action="{{ url_for('join_group') }}" method="get">
+                        <button type="submit" class="btn btn-info">Join an Existing Group</button>
+                    </form>
                 </div>
             </div>
-        </main>
+        </section>
 
-        <!-- Footer Section -->
-        <footer class="mt-5">
-            <div class="container">
-                <p class="text-center">&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
-            </div>
-        </footer>
+        <!-- Search Section -->
+        <section class="search-section mt-5">
+            <h2 class="text-center mb-3">Search</h2>
+            <form id="search-form" class="form-inline justify-content-center">
+                <input type="text" id="search" name="search" class="form-control mr-2" placeholder="Search Groups or Users...">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </section>
+
+        <!-- Search Results Section -->
+        <section id="search-results" class="mt-4">
+            <!-- Dynamic search results will appear here -->
+        </section>
+
+        <!-- Project Description Section -->
+        <section class="project-description mt-5">
+            <h2>About the Platform</h2>
+            <p>Welcome to the Collaborative Study Platform, where students and educators come together to create and join study groups. Our platform is designed to foster collaboration and enhance learning experiences. Whether you're preparing for exams, working on a project, or simply want to discuss topics with peers, our platform provides the tools you need to succeed.</p>
+        </section>
     </div>
+
+    <!-- Footer Section -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <p class="text-center">&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('search-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                var query = document.getElementById('search').value;
+
+                fetch('{{ url_for("search") }}?search=' + query)
+                    .then(response => response.json())
+                    .then(data => {
+                        var resultsHtml = '<h4>Search Results</h4>';
+                        var foundResults = false;
+
+                        if (data.users.length > 0) {
+                            resultsHtml += '<h5>Users</h5><ul>';
+                            data.users.forEach(function(user) {
+                                resultsHtml += '<li>' + user.username + '</li>';
+                            });
+                            resultsHtml += '</ul>';
+                            foundResults = true;
+                        }
+
+                        if (data.groups.length > 0) {
+                            resultsHtml += '<h5>Groups</h5><ul>';
+                            data.groups.forEach(function(group) {
+                                resultsHtml += '<li>' + group.name +
+                                               ' <button class="btn btn-info btn-sm join-button" data-group-id="' + group.id +
+                                               '" data-group-name="' + group.name +
+                                               '">Join</button></li>';
+                            });
+                            resultsHtml += '</ul>';
+                            foundResults = true;
+                        }
+
+                        if (!foundResults) {
+                            resultsHtml += '<div class="alert alert-warning">No users or groups found for "<strong>' + query + '</strong>".</div>';
+                        }
+
+                        document.getElementById('search-results').innerHTML = resultsHtml;
+
+                        // Event listeners for join buttons
+                        document.querySelectorAll('.join-button').forEach(function(button) {
+                            button.addEventListener('click', function() {
+                                var groupId = button.getAttribute('data-group-id');
+                                var groupName = button.getAttribute('data-group-name');
+
+                                fetch('{{ url_for("join_group_api") }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                    },
+                                    body: 'group_identifier=' + encodeURIComponent(groupName)  // Use group name or referral code
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert(data.message);
+                                        button.textContent = "Joined"; // Update button text
+                                        button.disabled = true; // Disable button
+                                        // Redirect to the group page
+                                        const baseUrl = '{{ url_for("group", group_id=0) }}'.replace('/0', '');
+                                        window.location.href = baseUrl + '/' + groupId;
+                                    } else {
+                                        alert('Error: ' + data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('An error occurred while trying to join the group.');
+                                });
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('search-results').innerHTML = '<div class="alert alert-danger">An error occurred while searching. Please try again.</div>';
+                    });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -3,60 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Collab Study Platform</title>
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
- 
 </head>
 <body>
-    <div class="container">
-        <div class="intro">
-            <h2>Welcome to Collab Study Platform</h2>
-        </div>
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px;">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h2 class="text-primary">Welcome to Collab Study Platform</h2>
+                </div>
 
-        <!-- Flash Message Display -->
-        <div class="flash-messages">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </div>
-        <!-- End Flash Message Display -->
+                <!-- Flash Message Display -->
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="alert alert-info">
+                            {% for message in messages %}
+                                <p class="mb-0">{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <!-- End Flash Message Display -->
 
-        <h2>Sign In</h2>
-        <form method="POST" action="{{ url_for('login') }}">
-            {{ form.hidden_tag() }}
-
-            <div class="form-group">
-                <label for="username">Username:</label>
-                {{ form.username(class="form-control") }}
-                {% if form.username.errors %}
-                    <div class="error-message">
-                        {% for error in form.username.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
+                <h4 class="text-center">Sign In</h4>
+                <form method="POST" action="{{ url_for('login') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        {{ form.username(class="form-control") }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">
+                                {% for error in form.username.errors %}
+                                    <small>{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
-            </div>
 
-            <div class="form-group">
-                <label for="password">Password:</label>
-                {{ form.password(class="form-control") }}
-                {% if form.password.errors %}
-                    <div class="error-message">
-                        {% for error in form.password.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        {{ form.password(class="form-control") }}
+                        {% if form.password.errors %}
+                            <div class="text-danger">
+                                {% for error in form.password.errors %}
+                                    <small>{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
-            </div>
 
-            <div class="form-group form-check">
-                {{ form.remember(class="form-check-input") }}
-                {{ form.remember.label(class="form-check-label") }}
-            </div>
+                    <div class="form-group form-check">
+                        {{ form.remember(class="form-check-input") }}
+                        {{ form.remember.label(class="form-check-label") }}
+                    </div>
 
-            <button type="submit" c
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <h6>Don't have an account?</h6>
+                    <form method="POST" action="{{ url_for('register') }}">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="btn btn-outline-primary btn-block">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

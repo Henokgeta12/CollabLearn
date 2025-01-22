@@ -4,71 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Group - Collaborative Study Platform</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_group.css')}}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_group.css') }}">
+
+    
 </head>
 <body>
-    <!-- Flash Message Display -->
-    <div class="flash-messages">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}    
-            {% endif %}
-        {% endwith %}
-    </div>
-    <!-- End Flash Message Display -->
+    <div class="container">
+        <!-- Flash Message Display -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <!-- End Flash Message Display -->
 
-    <!-- Header Section -->
-    <header>
-        <div class="container">
-           
+        <!-- Header Section -->
+        <header class="header">
             <h1>Create a New Group</h1>
             <div class="user-info">
                 <p>Welcome, <span id="username">{{ current_user.username }}</span></p>
-                <form action="{{ url_for('home')}}" method="POST" >
-                    <button type="submit" class="home"> Home</button>
-                </form><br>
-                
-                <form action="{{ url_for('logout') }}" method="POST">
-                    <button type="submit" id="logout">Logout</button>
-                </form>           
-            </div>
-        </div>
-    </header>
+                <form action="{{ url_for('home') }}" method="GET">
+                    <button type="submit" class="btn btn-secondary">Home</button>
+                </form>
 
-    <!-- Main Content Section -->
-    <main>
-        <div class="container">
+            </div>
+        </header>
+
+        <!-- Main Content Section -->
+        <main>
             <form method="POST" action="{{ url_for('create_group') }}" class="create-group-form">
+                {{ form.hidden_tag() }} <!-- CSRF token -->
+                
                 <div class="form-group">
                     <label for="group-name">Group Name:</label>
-                    <input type="text" id="group-name" name="group_name" required>
+                    {{ form.group_name }}
+                    {% for error in form.group_name.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
                 </div>
-                
-                <div class="form-group">
+    
+                <div class="form-group mt-3">
                     <label for="group-description">Group Description:</label>
-                    <textarea id="group-description" name="group_description"></textarea>
+                    {{ form.group_description }}
+                    {% for error in form.group_description.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
                 </div>
-                
-                <div class="form-group">
+    
+                <div class="form-group mt-3">
                     <label for="group-visibility">Group Visibility:</label>
-                    <select id="group-visibility" name="group_visibility">
-                        <option value="" disabled selected>Select Visibility</option>
-                        <option value="public" >Public</option>
-                        <option value="private">Private</option>
-                    </select>
+                    {{ form.group_visibility }}
+                    {% for error in form.group_visibility.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
                 </div>
-                <button type="submit" id="create-group">Create Group</button>
-            </form>
-        </div>
-    </main>
+    
+                <button type="submit" class="btn btn-primary mt-4">{{ form.submit.label }}</button>
+        </main>
+    </div>
 
     <!-- Footer Section -->
-    <footer>
+    <footer class="footer">
         <div class="container">
             <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
         </div>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,30 +1,216 @@
-<!-- join_group.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Group - Collaborative Study Platform</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/join_group.css') }}">
+    <title>Join Group</title>
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap for responsive design -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        header .btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        header .btn:hover {
+            background-color: #c82333;
+        }
+        main {
+            padding: 20px;
+        }
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #343a40;
+        }
+        #messages .message {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        #messages .message:last-child {
+            border-bottom: none;
+        }
+        #messages .timestamp {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        textarea, input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .btn:hover {
+            background-color: #489ef9;
+        }
+        footer {
+            background-color: #8bbbf5;
+            padding: 20px 0;
+            color: white;
+            text-align: center;
+        }
+        footer p {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-   
-    <div class="join-group-container">
-        <h1>Join a Group</h1>
-        <form method="POST" action="{{ url_for('join_group') }}">
-            <label for="referral_code">Group Referral Code or Group Name:</label>
-            <input type="text" id="group_identifier" name="group_identifier" required>
-            <button type="submit">Join Group</button>
-        </form>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul class="flash-messages">
-                {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                {% endfor %}
+    <div class="container mt-5">
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Header Section -->
+        <header>
+            <div class="container">
+                <h1>Join a Study Group</h1>
+                <p>Join a group to collaborate and share resources with other members.</p>
+            </div>
+        </header>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Collaborative Study Platform</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <form action="{{ url_for('home') }}" method="GET" class="d-inline">
+                                <button type="submit" class="btn home-button">Home</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container">
+            <!-- Group List -->
+            <section id="groups">
+                <h2><i class="fas fa-users"></i> Available Groups</h2>
+
+                <div id="group-list">
+                    {% for group in groups %}
+                        <div class="group-item mb-4">
+                            <h4>{{ group.name }}</h4>
+                            <p>{{ group.description }}</p>
+                            <p>Group ID: {{ group.id }}</p>
+                            <p>
+                                {% if group.privacy == 'public' %}
+                                    <strong>Created on:</strong> {{ group.created_at.strftime('%B %d, %Y') }}
+                                {% endif %}
+                            </p>
+
+                            <!-- Corrected form setup -->
+                            <form method="POST" action="{{ url_for('join_group') }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="group_id" value="{{ group.id }}">
+                                <button type="submit" class="btn btn-primary">Join Group</button>
+                                {% if group.privacy == 'private' %}
+                                    <div class="form-group">
+                                        <label for="referral_code_{{ group.id }}">Referral Code:</label>
+                                        <input type="text" name="referral_code" id="referral_code_{{ group.id }}" class="form-control" placeholder="Enter referral code" required>
+                                    </div>
+                                {% endif %}
+                            </form> <!-- Ensure the form is properly closed -->
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Pagination Controls -->
+            <nav aria-label="Group pagination">
+                <ul class="pagination justify-content-center">
+                    {% if pagination.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('join_group', page=pagination.prev_num) }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('join_group', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if pagination.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('join_group', page=pagination.next_num) }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
-            {% endif %}
-        {% endwith %}
+            </nav>
+        </main>
+
+        <!-- Footer Section -->
+        <footer>
+            <div class="container">
+                <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
+            </div>
+        </footer>
     </div>
+
+    <!-- External Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

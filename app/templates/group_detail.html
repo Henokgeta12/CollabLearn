@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Details - Collaborative Study Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/group_details.css') }}">
+    <script>
+        function confirmLeaveGroup() 
+        {
+            return confirm("Are you sure you want to leave the group?");
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+                dropdown.addEventListener('change', function () {
+                    const taskId = this.dataset.taskId;
+                    const groupId = this.dataset.groupId;
+                    const newStatus = this.value;
+
+                    // Send the status update via fetch
+                    fetch(`/update_task_status/${groupId}/${taskId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Task status updated successfully!');
+                        } else {
+                            alert('Error updating task status.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        });
+    </script>
+    </script>
+     <!-- Font Awesome for icons -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+     <!-- Bootstrap for responsive design -->
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+     <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        header .btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        header .btn:hover {
+            background-color: #c82333;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #343a40;
+        }
+
+        #messages .message {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        #messages .message:last-child {
+            border-bottom: none;
+        }
+
+        #messages .timestamp {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        textarea, input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+    
+</head>
+<body>
+  
+    <!-- Group Details Container -->
+    <div class="group-details-container">
+
+        <h1>{{ group.name }}</h1> <!-- Display the group name -->
+        <p><strong>Description:</strong> {{ group.description }}</p> <!-- Display the group description -->
+        <p><strong>Created By:</strong> {{ group.creator.username }}</p> <!-- Display the creator's username -->
+        <p><strong>Privacy:</strong> {{ group.privacy | capitalize }}</p> <!-- Display the group's privacy -->
+
+        <!-- Display Referral Code if Group is Private -->
+        <div class="referral-code">
+            {% if group.privacy == 'private' %}
+            <p><strong>Referral Code:</strong> {{ referral_code }}</p>
+        {% endif %}
+        </div>
+
+        <!-- Members Section -->
+        <h2>Members</h2>
+        <ul>
+            {% for member in members %}
+                <li>{{ member.user.username }} ({{ member.role | capitalize }})</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Actions -->
+        <div class="actions">
+            <form action="{{ url_for('home')} }" method="get">
+                <button type="submit" class="home"> Home</button>
+            </form>
+            <!-- {% if current_user.id == group.created_by %}
+                <button>Edit Group</button>
+                <button>Delete Group</button>
+            {% endif %}
+             -->
+    
+        </div>
+    </div>
+</body>
+</html>
