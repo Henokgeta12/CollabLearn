@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 
 
-    def create_app(config_class=Config):
+def create_app(config_class=Config):
         """
         Create and configure the Flask application.
 
@@ -22,32 +22,32 @@ from dotenv import load_dotenv
             app (Flask): The configured Flask application instance.
         """
 
-    app = Flask(__name__, template_folder="templates")
-    app.config.from_object(config_class)
-    Config.init_app(app)
-    app.config['UPLOAD_FOLDER'] = 'static/user_profile-pic'
-    app.config['STATIC_FOLDER'] = '/static'
-    app.config['STATIC_URL_PATH'] = '/static'
-    
+        app = Flask(__name__, template_folder="templates")
+        app.config.from_object(config_class)
+        Config.init_app(app)
+        app.config['UPLOAD_FOLDER'] = 'static/user_profile-pic'
+        app.config['STATIC_FOLDER'] = '/static'
+        app.config['STATIC_URL_PATH'] = '/static'
+        
 
-    # Initialize extensions
-    db.init_app(app)
-    login_manager.init_app(app)
-    login_manager.login_view = 'login'
-    migrate.init_app(app, db)
+        # Initialize extensions
+        db.init_app(app)
+        login_manager.init_app(app)
+        login_manager.login_view = 'login'
+        migrate.init_app(app, db)
 
-    # Initialize CSRF protection
-    csrf = CSRFProtect(app)
+        # Initialize CSRF protection
+        csrf = CSRFProtect(app)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        from .models.user_models import Users
-        return Users.query.get(int(user_id))
+        @login_manager.user_loader
+        def load_user(user_id):
+            from .models.user_models import Users
+            return Users.query.get(int(user_id))
 
-    # Register routes
-    with app.app_context():
-        from app.routes import register_routes
-        register_routes(app)
+        # Register routes
+        with app.app_context():
+            from app.routes import register_routes
+            register_routes(app)
 
-    return app
+        return app
 
