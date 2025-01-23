@@ -12,8 +12,7 @@ import os
 import json
 import hashlib
 
-def register_routes(app):
-    """
+"""
     Registers routes for the application.
 
     The routes include:
@@ -30,42 +29,43 @@ def register_routes(app):
     - Get account information
 
     The functions are decorated with route, login_required, and methods.
-    """
+"""
+def register_routes(app):
     @app.route('/')
     def welcome():
-    """
-    The welcome route renders the welcome template.
+        """
+        The welcome route renders the welcome template.
 
-    This route is accessible to unauthenticated users.
+        This route is accessible to unauthenticated users.
 
-    :returns: The rendered welcome template
-    """
+        :returns: The rendered welcome template
+        """
         return render_template('welcome.html')
 
     @app.route('/home',methods=['GET', 'POST'])
     @login_required
     def home():
-    """
-    The home route renders the home template.
+        """
+        The home route renders the home template.
 
-    This route is only accessible to authenticated users.
+        This route is only accessible to authenticated users.
 
-    :returns: The rendered home template
-    """
+        :returns: The rendered home template
+        """
         return render_template('home.html')
 
     @app.route('/register', methods=['GET', 'POST'])
     def register():
-    """
-    The register route renders the registration template.
+        """
+        The register route renders the registration template.
 
-    This route is only accessible to unauthenticated users.
+        This route is only accessible to unauthenticated users.
 
-    The route uses the RegistrationForm to validate the user's input.
-    If the input is valid, the user's information is stored in the database.
+        The route uses the RegistrationForm to validate the user's input.
+        If the input is valid, the user's information is stored in the database.
 
-    :returns: The rendered registration template
-    """
+        :returns: The rendered registration template
+        """
         if current_user.is_authenticated:
             return redirect(url_for('home'))
         form = RegistrationForm()
@@ -80,19 +80,18 @@ def register_routes(app):
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
-    """
-    The login route handles user authentication.
+        """
+        The login route handles user authentication.
 
-    This route is accessible to unauthenticated users and allows them to log in using their credentials.
-    If the user is already authenticated, they are redirected to the home page.
+        This route is accessible to unauthenticated users and allows them to log in using their credentials.
+        If the user is already authenticated, they are redirected to the home page.
 
-    The route uses the LoginForm to validate the user's input. If the input is valid and the username and 
-    password are correct, the user is logged in and redirected to the home page. Otherwise, an error 
-    message is displayed.
+        The route uses the LoginForm to validate the user's input. If the input is valid and the username and 
+        password are correct, the user is logged in and redirected to the home page. Otherwise, an error 
+        message is displayed.
 
-    :returns: The rendered login template or a redirect to the home page
-    """
-
+        :returns: The rendered login template or a redirect to the home page
+        """
         if current_user.is_authenticated:
             return redirect(url_for('home'))
         form = LoginForm()
@@ -109,13 +108,13 @@ def register_routes(app):
     @app.route('/logout', methods=['POST'])
     @login_required
     def logout():
-    """
-    The logout route handles user logout.
+        """
+        The logout route handles user logout.
 
-    This route is accessible to authenticated users and logs them out. The user is redirected to the home page.
+        This route is accessible to authenticated users and logs them out. The user is redirected to the home page.
 
-    :returns: A redirect to the home page
-    """
+        :returns: A redirect to the home page
+        """
         logout_user()
         flash('You have been logged out.', 'info')
         return redirect(url_for('home'))
@@ -123,28 +122,26 @@ def register_routes(app):
     @app.route('/create_group', methods=['POST', 'GET'])
     @login_required
     def create_group():
-    """
-    Handle the creation of a new study group.
+        """
+        Handle the creation of a new study group.
 
-    This route is accessible only to authenticated users and allows them to create a new study group by
-    filling out a form with the group's name, description, and privacy settings. Upon successful creation,
-    the group is saved to the database, the current user is added as an admin member, and a referral code is
-    generated if the group is private.
+        This route is accessible only to authenticated users and allows them to create a new study group by
+        filling out a form with the group's name, description, and privacy settings. Upon successful creation,
+        the group is saved to the database, the current user is added as an admin member, and a referral code is
+        generated if the group is private.
 
-    POST:
-        - Validates and processes the group creation form.
-        - Creates a new group instance with the provided details.
-        - Adds the group to the database.
-        - Assigns the current user as an admin of the new group.
-        - Renders the group detail page upon success or redirects back to the creation page on failure.
+        POST:
+            - Validates and processes the group creation form.
+            - Creates a new group instance with the provided details.
+            - Adds the group to the database.
+            - Assigns the current user as an admin of the new group.
+            - Renders the group detail page upon success or redirects back to the creation page on failure.
 
-    GET:
-        - Renders the group creation form.
+        GET:
+            - Renders the group creation form.
 
-    :returns: The rendered group detail template on success or redirect to the creation form on failure.
-    """
-
-
+        :returns: The rendered group detail template on success or redirect to the creation form on failure.
+        """
         form = CreateGroupForm()
         if request.method == 'POST':
             group_name = request.form.get('group_name')
@@ -203,12 +200,12 @@ def register_routes(app):
     @app.route('/join_group_api', methods=['POST'])
     @login_required
     def join_group_api():
-    """
-    Handles POST requests to join a study group via its name or referral code. If the group is found, the user is added to the group and a success message is returned. If the user is already a member, a failure message is returned. If the group is not found, a 404 error is returned.
+        """
+        Handles POST requests to join a study group via its name or referral code. If the group is found, the user is added to the group and a success message is returned. If the user is already a member, a failure message is returned. If the group is not found, a 404 error is returned.
 
-    :param group_identifier: The name or referral code of the group to join.
-    :returns: A JSON object containing a success message and a redirect URL if the group was found and the user was added, a failure message if the user is already a member, or a 404 error if the group was not found.
-    """
+        :param group_identifier: The name or referral code of the group to join.
+        :returns: A JSON object containing a success message and a redirect URL if the group was found and the user was added, a failure message if the user is already a member, or a 404 error if the group was not found.
+        """
         group_identifier = request.form.get('group_identifier')
         group = StudyGroups.query.filter_by(name=group_identifier).first()  # Adjust this to use name or referral code
 
@@ -234,26 +231,25 @@ def register_routes(app):
     @app.route('/join_group', methods=['GET', 'POST'])
     @login_required
     def join_group():
-    """
-    Renders the join group page and handles the logic for joining a study group.
+        """
+        Renders the join group page and handles the logic for joining a study group.
 
-    GET requests display a paginated list of public study groups that the user can join.
-    POST requests handle the user attempting to join a specific group by its ID. If the group
-    is private, a valid referral code is required. Checks are performed to ensure the user
-    is not already a member before adding them to the group.
+        GET requests display a paginated list of public study groups that the user can join.
+        POST requests handle the user attempting to join a specific group by its ID. If the group
+        is private, a valid referral code is required. Checks are performed to ensure the user
+        is not already a member before adding them to the group.
 
-    Returns:
-        - On GET: Renders 'join_group.html' template with a form, list of groups, and pagination details.
-        - On POST:
-            - Redirects to the group page if the user successfully joins the group.
-            - Redirects to the join group page with a flash message if the referral code is invalid
-              or if the user is already a member.
-            - Displays an error flash message if submission fails.
+        Returns:
+            - On GET: Renders 'join_group.html' template with a form, list of groups, and pagination details.
+            - On POST:
+                - Redirects to the group page if the user successfully joins the group.
+                - Redirects to the join group page with a flash message if the referral code is invalid
+                or if the user is already a member.
+                - Displays an error flash message if submission fails.
 
-    Raises:
-        - 404 if the group ID is invalid or not found.
-    """
-
+        Raises:
+            - 404 if the group ID is invalid or not found.
+        """
         form = JoinGroupForm()
         page = request.args.get('page', 1, type=int)
         per_page = 5
@@ -288,24 +284,24 @@ def register_routes(app):
                 
     @app.route('/search', methods=['GET'])
     def search():
-    """
-    Handles GET requests to search for users and study groups by name.
-    
-    Returns a JSON object with two keys: 'users' and 'groups'. The values are lists of dictionaries
-    containing the user/group details. If the search query is empty, returns a 400 error with a JSON
-    object containing an 'error' key with a descriptive message.
-    
-    Example response: {
-        'users': [
-            {'id': 1, 'username': 'johnDoe', 'email': 'john@example.com'},
-            {'id': 2, 'username': 'janeDoe', 'email': 'jane@example.com'}
-        ],
-        'groups': [
-            {'id': 1, 'name': 'Math Study Group', 'description': 'A group for math students.'},
-            {'id': 2, 'name': 'Science Study Group', 'description': 'A group for science students.'}
-        ]
-    }
-    """
+        """
+        Handles GET requests to search for users and study groups by name.
+        
+        Returns a JSON object with two keys: 'users' and 'groups'. The values are lists of dictionaries
+        containing the user/group details. If the search query is empty, returns a 400 error with a JSON
+        object containing an 'error' key with a descriptive message.
+        
+        Example response: {
+            'users': [
+                {'id': 1, 'username': 'johnDoe', 'email': 'john@example.com'},
+                {'id': 2, 'username': 'janeDoe', 'email': 'jane@example.com'}
+            ],
+            'groups': [
+                {'id': 1, 'name': 'Math Study Group', 'description': 'A group for math students.'},
+                {'id': 2, 'name': 'Science Study Group', 'description': 'A group for science students.'}
+            ]
+        }
+        """
         search_query = request.args.get('search', '').strip()
 
         if not search_query:
@@ -328,16 +324,16 @@ def register_routes(app):
     @app.route('/leave_group/<int:group_id>', methods=['POST'])
     @login_required
     def leave_group(group_id):
-    """
-    Handles POST requests to leave a study group. If the user is not a member of the group, a danger flash message is displayed and the user is redirected to the group details page. If the user is a member, their membership is deleted, and a success flash message is displayed. If an error occurs while deleting the membership, an error message is displayed and the user is redirected to the group details page.
+        """
+        Handles POST requests to leave a study group. If the user is not a member of the group, a danger flash message is displayed and the user is redirected to the group details page. If the user is a member, their membership is deleted, and a success flash message is displayed. If an error occurs while deleting the membership, an error message is displayed and the user is redirected to the group details page.
 
-    Returns:
-        - Redirects to the home page if the user successfully leaves the group.
-        - Redirects to the group details page with a flash message if the user is not a member or if an error occurs.
+        Returns:
+            - Redirects to the home page if the user successfully leaves the group.
+            - Redirects to the group details page with a flash message if the user is not a member or if an error occurs.
 
-    Raises:
-        - 404 if the group ID is invalid or not found.
-    """
+        Raises:
+                - 404 if the group ID is invalid or not found.
+        """
         group = StudyGroups.query.get_or_404(group_id)
         membership = GroupMemberships.query.filter_by(group_id=group_id, user_id=current_user.id).first()
 
@@ -358,16 +354,16 @@ def register_routes(app):
     @app.route('/group/<int:group_id>/send_message', methods=['POST'])
     @login_required
     def send_message(group_id):
-    """
-    Handles POST requests to send a message in a study group. If the user is not a member of the group, a danger flash message is displayed and the user is redirected to the group details page. If the user is a member, the message is saved to the database, and a success flash message is displayed. If an error occurs while saving the message, an error message is displayed and the user is redirected to the group details page.
+        """
+        Handles POST requests to send a message in a study group. If the user is not a member of the group, a danger flash message is displayed and the user is redirected to the group details page. If the user is a member, the message is saved to the database, and a success flash message is displayed. If an error occurs while saving the message, an error message is displayed and the user is redirected to the group details page.
 
-    Returns:
-        - Redirects to the home page if the user successfully sends a message.
-        - Redirects to the group details page with a flash message if the user is not a member or if an error occurs.
+        Returns:
+            - Redirects to the home page if the user successfully sends a message.
+            - Redirects to the group details page with a flash message if the user is not a member or if an error occurs.
 
-    Raises:
-        - 404 if the group ID is invalid or not found.
-    """
+        Raises:
+            - 404 if the group ID is invalid or not found.
+        """
         message_form = MessageForm()
         if message_form.validate_on_submit():
             content = message_form.content.data
@@ -397,29 +393,28 @@ def register_routes(app):
     @app.route('/group/<int:group_id>', methods=['GET', 'POST'])
     @login_required
     def group(group_id):
-    
-    """
-    Handles GET and POST requests to view and interact with a study group. If the user is not a member of the group, a danger flash message is displayed and the user is redirected to the home page.
+        """
+        Handles GET and POST requests to view and interact with a study group. If the user is not a member of the group, a danger flash message is displayed and the user is redirected to the home page.
 
-    GET requests render the group.html template with the group details, messages, tasks, latest notification, resources, and group notes.
+        GET requests render the group.html template with the group details, messages, tasks, latest notification, resources, and group notes.
 
-    POST requests handle the submission of the following forms:
+        POST requests handle the submission of the following forms:
 
-    - UpdateTaskStatusForm: Updates the status of a task in the group.
-    - GroupNotesForm: Updates the group notes.
-    - MessageForm: Sends a new message in the group.
-    - UploadResourceForm: Uploads a new resource to the group.
-    - TaskForm: Creates a new task in the group.
-    If the form is valid, the appropriate action is taken and a success flash message is displayed. If the form is invalid or an error occurs, an error message is displayed and the user is redirected to the group details page.
+        - UpdateTaskStatusForm: Updates the status of a task in the group.
+        - GroupNotesForm: Updates the group notes.
+        - MessageForm: Sends a new message in the group.
+        - UploadResourceForm: Uploads a new resource to the group.
+        - TaskForm: Creates a new task in the group.
+        If the form is valid, the appropriate action is taken and a success flash message is displayed. If the form is invalid or an error occurs, an error message is displayed and the user is redirected to the group details page.
 
-    Returns:
-        - Redirects to the home page if the user is not a member of the group.
-        - Redirects to the group details page with a flash message if the form is invalid or an error occurs.
-        - Renders the group.html template with the group details and form data if the form is valid.
+        Returns:
+            - Redirects to the home page if the user is not a member of the group.
+            - Redirects to the group details page with a flash message if the form is invalid or an error occurs.
+            - Renders the group.html template with the group details and form data if the form is valid.
 
-    Raises:
-        - 404 if the group ID is invalid or not found.
-    """
+        Raises:
+            - 404 if the group ID is invalid or not found.
+        """
 
         group = StudyGroups.query.get_or_404(group_id)
         membership = GroupMemberships.query.filter_by(group_id=group_id, user_id=current_user.id).first()
@@ -470,23 +465,22 @@ def register_routes(app):
     @app.route('/group/<int:group_id>/update_task_status', methods=['POST'])
     @login_required
     def update_task_status(group_id):
-    """
-    Update the status of a specific task within a group.
+        """
+        Update the status of a specific task within a group.
 
-    This route handles the form submission for updating the status of a task.
-    It validates the presence of a task ID and fetches the corresponding task
-    from the database. If the task is found, its status is updated with the new
-    status provided in the form, and the changes are committed to the database.
-    Success or error messages are flashed accordingly.
+        This route handles the form submission for updating the status of a task.
+        It validates the presence of a task ID and fetches the corresponding task
+        from the database. If the task is found, its status is updated with the new
+        status provided in the form, and the changes are committed to the database.
+        Success or error messages are flashed accordingly.
 
-    Args:
-        group_id (int): The ID of the group to which the task belongs.
+        Args:
+            group_id (int): The ID of the group to which the task belongs.
 
-    Returns:
-        A redirect to the group's page with a flash message indicating the
-        success or failure of the operation.
-    """
-
+        Returns:
+            A redirect to the group's page with a flash message indicating the
+            success or failure of the operation.
+        """
         task_id = request.form.get('task_id')
         new_status = request.form.get('status')
         if not task_id:
@@ -507,22 +501,22 @@ def register_routes(app):
     @app.route('/group/<int:group_id>/save_group_notes', methods=['POST'])
     @login_required
     def save_group_notes(group_id):
-    """
-    Save the content of a group's notes.
+        """
+        Save the content of a group's notes.
 
-    This route handles the submission of a form from the group page
-    containing the updated content of the group's notes. It fetches the
-    corresponding GroupNotes object from the database, updates its
-    content, and commits the changes. Success or error messages are
-    flashed accordingly.
+        This route handles the submission of a form from the group page
+        containing the updated content of the group's notes. It fetches the
+        corresponding GroupNotes object from the database, updates its
+        content, and commits the changes. Success or error messages are
+        flashed accordingly.
 
-    Args:
-        group_id (int): The ID of the group whose notes are being updated.
+        Args:
+            group_id (int): The ID of the group whose notes are being updated.
 
-    Returns:
-        A redirect to the group's page with a flash message indicating the
-        success or failure of the operation.
-    """
+        Returns:
+            A redirect to the group's page with a flash message indicating the
+            success or failure of the operation.
+        """
         group_notes = GroupNotes.query.filter_by(group_id=group_id).first()
         group_notes.content = request.form.get('content')
         db.session.commit()
@@ -532,21 +526,21 @@ def register_routes(app):
     @app.route('/group/<int:group_id>/create_task', methods=['POST'])
     @login_required
     def create_task(group_id):
-    """
-    Handles the submission of the task creation form on the group page.
-    
-    Fetches the corresponding group from the database and validates the
-    form data. If the form is valid, a new GroupTasks object is created with
-    the provided task description, assigned to the current user, and added
-    to the database. Success or error messages are flashed accordingly.
-    
-    Args:
-        group_id (int): The ID of the group to which the task belongs.
-    
-    Returns:
-        A redirect to the group's page with a flash message indicating the
-        success or failure of the operation.
-    """
+        """
+        Handles the submission of the task creation form on the group page.
+        
+        Fetches the corresponding group from the database and validates the
+        form data. If the form is valid, a new GroupTasks object is created with
+        the provided task description, assigned to the current user, and added
+        to the database. Success or error messages are flashed accordingly.
+        
+        Args:
+            group_id (int): The ID of the group to which the task belongs.
+        
+        Returns:
+            A redirect to the group's page with a flash message indicating the
+            success or failure of the operation.
+        """
         task_form = TaskForm()
         group = StudyGroups.query.get_or_404(group_id)
 
@@ -576,21 +570,21 @@ def register_routes(app):
     @app.route('/group/<int:group_id>/upload_resource', methods=['POST'])
     @login_required
     def upload_resource(group_id):
-    """Upload a resource to a group.
+        """Upload a resource to a group.
 
-    This view accepts a POST request from the "Upload Resource" form in the group
-    page. It validates the form data using the UploadResourceForm object. If the
-    form is valid, a new GroupResources object is created with the provided file
-    details and added to the database. Success or error messages are flashed
-    accordingly.
+        This view accepts a POST request from the "Upload Resource" form in the group
+        page. It validates the form data using the UploadResourceForm object. If the
+        form is valid, a new GroupResources object is created with the provided file
+        details and added to the database. Success or error messages are flashed
+        accordingly.
 
-    Args:
-        group_id (int): The ID of the group to which the resource belongs.
+        Args:
+            group_id (int): The ID of the group to which the resource belongs.
 
-    Returns:
-        A redirect to the group's page with a flash message indicating the
-        success or failure of the operation.
-    """
+        Returns:
+            A redirect to the group's page with a flash message indicating the
+            success or failure of the operation.
+        """
 
         upload_form = UploadResourceForm()
 
@@ -630,16 +624,16 @@ def register_routes(app):
     @app.route('/account', methods=['GET', 'POST'])
     @login_required
     def account():
-    """
-    Allows users to update their profile picture and account information.
+        """
+        Allows users to update their profile picture and account information.
 
-    GET:
-        Displays the current user's profile picture and account information.
+        GET:
+            Displays the current user's profile picture and account information.
 
-    POST:
-        Updates the current user's profile picture and/or account information if the
-        submitted form is valid.
-    """
+        POST:
+            Updates the current user's profile picture and/or account information if the
+            submitted form is valid.
+        """
         img_file = url_for('static', filename='user_profile-pic/' + current_user.profile_img)
         profile_form = UpdateProfileForm()
         account_form = Update_Acc_Form()
@@ -672,15 +666,15 @@ def register_routes(app):
     @app.route('/update_profile', methods=['GET', 'POST'])
     @login_required
     def update_profile():
-    """
-    Updates the current user's profile information if the submitted form is valid.
-
-    GET:
-        Displays the current user's profile information in the account form.
-
-    POST:
+        """
         Updates the current user's profile information if the submitted form is valid.
-    """
+
+        GET:
+            Displays the current user's profile information in the account form.
+
+        POST:
+            Updates the current user's profile information if the submitted form is valid.
+        """
 
         account_form = Update_Acc_Form()
         profile_form = UpdateProfileForm()
@@ -697,13 +691,13 @@ def register_routes(app):
     @app.route('/get_account_info', methods=['GET'])
     @login_required
     def get_account_info():
-    """
-    Returns the current user's account information, including profile picture and
-    groups created, in JSON format.
+        """
+        Returns the current user's account information, including profile picture and
+        groups created, in JSON format.
 
-    GET:
-        Returns the current user's account information in JSON format.
-    """
+        GET:
+            Returns the current user's account information in JSON format.
+        """
         img_file = url_for('static', filename='user_profile_pic/' + current_user.profile_img)
         
         # Query the groups created by the current user
