@@ -3,7 +3,6 @@ Welcome to CollabLearn, a web application designed to facilitate collaborative l
 
 Note: This project is currently in its Minimum Viable Product (MVP) stage. An MVP is a version of a product with just enough features to be usable by early customers who can then provide feedback for future development. 
 
-
 Features
 User Registration and Authentication: Secure sign-up and login processes to protect user data.
 Study Group Management: Create, join, and manage study groups tailored to specific subjects or projects.
@@ -20,22 +19,18 @@ To set up the project locally:
 
 Clone the Repository:
 
-bash
-Copy
 Edit
 git clone https://github.com/Henokgeta12/CollabLearn.git
 cd CollabLearn
 Set Up a Virtual Environment:
 
-bash
-Copy
+
 Edit
 python3 -m venv venv
 source venv/bin/activate  # On Windows, use venv\Scripts\activate
 Install Dependencies:
 
-bash
-Copy
+
 Edit
 pip install -r requirements.txt
 Configure the Database:
@@ -45,14 +40,12 @@ Create a database named collablearn.
 Update the database configuration in config.py with your MySQL credentials.
 Apply Migrations:
 
-bash
-Copy
+
 Edit
 flask db upgrade
 Run the Application:
 
-bash
-Copy
+
 Edit
 flask run
 Access the application at http://127.0.0.1:5000/.
