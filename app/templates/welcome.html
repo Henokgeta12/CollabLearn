@@ -7,7 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
-    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
 </head>
 <body>
     <div class="container-fluid p-0">
@@ -36,11 +38,33 @@
             </div>
         </nav>
 
-        <section class="description container">
+        <section class="description container my-4">
             <p>Collab Study Platform is your go-to place for creating and joining study groups. Whether you want to collaborate with peers or manage study sessions, our platform offers the tools you need to succeed.</p>
         </section>
 
-        <footer class="footer">
+        <!-- Features Section -->
+        <section class="features container my-5">
+            <h2 class="text-center mb-4">Platform Features</h2>
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <img src="{{ url_for('static', filename='images/create_group.png') }}" alt="Create Group" class="img-fluid mb-3" style="max-width: 80px;">
+                    <h5>Create Study Groups</h5>
+                    <p>Easily create study groups and invite your friends or classmates to join.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <img src="{{ url_for('static', filename='images/collaborate.png') }}" alt="Collaborate" class="img-fluid mb-3" style="max-width: 80px;">
+                    <h5>Collaborate in Real-Time</h5>
+                    <p>Chat, share resources, and take notes together in real time.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <img src="{{ url_for('static', filename='images/track_progress.png') }}" alt="Track Progress" class="img-fluid mb-3" style="max-width: 80px;">
+                    <h5>Track Progress</h5>
+                    <p>Monitor group activity and stay updated on tasks and goals.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer text-center py-3">
             <p>&copy; 2024 Collab Study Platform. All rights reserved.</p>
         </footer>
     </div>
