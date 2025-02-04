@@ -15,6 +15,7 @@ class Users(db.Model,UserMixin):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     profile_img =db.Column(db.String(25),nullable=False,default ='default.jpg')
+    is_verified = db.Column(db.Boolean, nullable=False, default=False)
 
     def set_password(self, password):
         """
@@ -58,8 +59,7 @@ class Users(db.Model,UserMixin):
             'email': self.email,
             'created_at': self.created_at.isoformat(),  # Convert datetime to ISO format
             'last_login': self.created_at.isoformat(),
+            'is_verified': self.is_verified,
         }
-    
-
     def __repr__(self):
         return f'<User {self.username} ({self.email})>'
