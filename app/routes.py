@@ -1,11 +1,11 @@
-from flask import Flask, request, redirect, url_for, flash, render_template, jsonify
+from flask import Flask, request, redirect, url_for, flash, render_template, jsonify,send_from_directory
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import RegistrationForm, LoginForm, UpdateProfileForm, Update_Acc_Form, JoinGroupForm, CreateGroupForm, MessageForm, UploadResourceForm, TaskForm, UpdateTaskStatusForm, GroupNotesForm,JoinGroupForm
+from .forms import RegistrationForm, LoginForm, UpdateProfileForm, Update_Acc_Form, JoinGroupForm, CreateGroupForm, MessageForm, UploadResourceForm, TaskForm, UpdateTaskStatusForm, GroupNotesForm,JoinGroupForm,VerifyEmailForm
 from .models.user_models import db, Users
 from .models.group_models import StudyGroups, GroupMemberships, GroupResources
 from .models.collaboration_models import Messages, GroupNotes, GroupTasks, GroupMessages
 from .models.notification_models import Notifications
-from .extensions import allowed_file
+from .extensions import allowed_file,socketio,send_verification_email,verifyEmail
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
@@ -421,12 +421,11 @@ def register_routes(app):
 
         if not membership:
             flash('You are not a member of this group.', 'danger')
-            return redirect(url_for('home'))
+            return redirect(url_for('join_group'))
 
         messages = Messages.query.filter_by(group_id=group_id).order_by(Messages.created_at.asc()).all()
         tasks = GroupTasks.query.filter_by(group_id=group_id).all()
         latest_notification = Notifications.query.filter_by(user_id=current_user.id).order_by(Notifications.id.desc()).first()
-        print(f"Latest notification: {latest_notification}")
         resources = GroupResources.query.filter_by(group_id=group_id).all()
         group_notes = GroupNotes.query.filter_by(group_id=group_id).first()
 
@@ -446,10 +445,15 @@ def register_routes(app):
             return redirect(url_for('group', group_id=group_id))
 
         if group_notes_form.validate_on_submit():
-            group_notes.content = group_notes_form.content.data
-            db.session.commit()
-            flash('Group notes saved successfully!', 'success')
-            return redirect(url_for('group', group_id=group_id))
+                group_notes = GroupNotes(
+                group_id=group_id,
+                last_updated_by=current_user.id,
+                content=group_notes_form.content.data
+            )
+                db.session.add(group_notes)
+                db.session.commit()
+                flash('Group notes saved successfully!', 'success')
+                return redirect(url_for('group', group_id=group_id))
 
         if message_form.validate_on_submit():
             new_message = Messages(content=message_form.content.data, user_id=current_user.id, group_id=group_id)
@@ -546,11 +550,14 @@ def register_routes(app):
 
         if task_form.validate_on_submit():
             task_description = task_form.task_description.data
-            new_task = GroupTasks(task_description=task_description, group_id=group_id, status='pending', assigned_to=current_user.id)
-            db.session.add(new_task)
-            db.session.commit()
-
-            flash('Task added successfully!', 'success')
+            new_task = GroupTasks(group_id=group_id, task_description=task_description, status='pending')
+            try:
+                db.session.add(new_task)
+                db.session.commit()
+                flash('Task added successfully!', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'An error occurred : {str(e)}', 'danger')
 
             # Notify other group members
             for member in group.members:
@@ -559,11 +566,14 @@ def register_routes(app):
                         user_id=member.id,
                         message=f"{current_user.username} added a new task in {group.name}: {task_description}"
                     )
-                    db.session.add(notification)
-
-            db.session.commit()
-            return redirect(url_for('group', group_id=group_id))
-
+                    try:
+                        db.session.add(notification)
+                        db.session.commit()
+                        return redirect(url_for('group', group_id=group_id))
+                    except Exception as e:
+                        db.session.rollback()
+                        flash(f'An error occurred : {str(e)}', 'danger')
+                            
         return render_template('group.html', task_form=task_form)
 
 
@@ -637,7 +647,8 @@ def register_routes(app):
         img_file = url_for('static', filename='user_profile-pic/' + current_user.profile_img)
         profile_form = UpdateProfileForm()
         account_form = Update_Acc_Form()
-
+        verify_form = VerifyEmailForm()
+        
         if request.method == 'GET':
             account_form.username.data = current_user.username
             account_form.email.data = current_user.email
@@ -661,7 +672,7 @@ def register_routes(app):
             else:
                 flash('No file selected. Please select a file to upload.', 'error')
 
-        return render_template('account.html', img_file=img_file, profile_form=profile_form, account_form=account_form)
+        return render_template('account.html', img_file=img_file, profile_form=profile_form, account_form=account_form,verify_form = verify_form,verified=current_user.is_verified)
 
     @app.route('/update_profile', methods=['GET', 'POST'])
     @login_required
@@ -678,6 +689,7 @@ def register_routes(app):
 
         account_form = Update_Acc_Form()
         profile_form = UpdateProfileForm()
+        verify_form = VerifyEmailForm()
 
         if request.method == 'POST' and account_form.validate_on_submit():
             current_user.username = account_form.username.data
@@ -686,7 +698,7 @@ def register_routes(app):
             flash('Account information updated successfully!', 'success')
             return redirect(url_for('account'))
 
-        return render_template('account.html', account_form=account_form, profile_form = UpdateProfileForm)
+        return render_template('account.html',verified=current_user.is_verified, account_form=account_form, profile_form = profile_form ,verify_form = verify_form)
 
     @app.route('/get_account_info', methods=['GET'])
     @login_required
@@ -713,3 +725,67 @@ def register_routes(app):
             'created_groups': groups_info  # Add the created groups
         }
         return jsonify(account_info)
+
+
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory(app.static_folder, 'static/images/favicon-16x16.ico', mimetype='image/x-icon')
+    
+    @app.route('/send-verification', methods=['POST'])
+    @login_required
+    def send_verification():
+        """
+        Sends a verification email to the current user's email address if it is not already verified.
+
+        POST:
+            - Checks if the user's email exists. If not, flashes an error message and redirects to the account page.
+            - If the user's email is already verified, flashes a success message and redirects to the account page.
+            - Sends a verification email to the user's email address using the send_verification_email function.
+            - Redirects to the account page after attempting to send the verification email.
+        """
+        email = current_user.email
+        if not email:
+            flash('Email not found', 'error')
+            return redirect(url_for('account')) 
+
+        if current_user.is_verified:
+            flash('Email already verified', 'success')
+            return redirect(url_for('account'))
+        
+        send_verification_email(email)
+
+        return redirect(url_for('account'))
+            
+
+    @app.route('/verify-email/<token>', methods=['GET'])
+    def verify_email(token):
+        """
+        Verifies a user's email address using a token sent in an email.
+
+        GET:
+            - Verifies the token and checks if it is valid.
+            - If the token is invalid, flashes an error message and redirects to the account page.
+            - Queries the user with the email address associated with the token.
+            - If the user is not found, flashes an error message and redirects to the account page.
+            - Marks the user as verified and commits the changes to the database.
+            - Redirects to the account page after verifying the user's email address. If an error occurs during the commit, rolls back the changes and flashes an error message.
+        """
+        email = verifyEmail(token)
+        if not email:
+            flash('Invalid or expired token', 'error')
+            return redirect(url_for('account'))
+        
+        user = Users.query.filter_by(email=email).first()
+        if not user:
+            flash('User not found','error')
+            return redirect(url_for('account'))
+
+        # Mark the user as verified
+        try:
+            user.is_verified = True
+            db.session.commit()
+            flash('Your email has been successfully verified!', 'success')
+            return redirect(url_for('account'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred : {str(e)}', 'danger')
