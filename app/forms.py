@@ -138,3 +138,10 @@ class JoinGroupForm(FlaskForm):
     group_id = HiddenField('Group ID', validators=[DataRequired()])
     referral_code = StringField('Referral Code', validators=[DataRequired()])
     submit = SubmitField('Join Group')
+
+class MessageForm(FlaskForm):
+    content = TextAreaField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send')
+    
+class VerifyEmailForm(FlaskForm):
+    submit = SubmitField('Verify Email')
