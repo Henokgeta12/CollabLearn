@@ -1,10 +1,11 @@
 from flask import Flask
-from .extensions import db, login_manager, migrate
+from .extensions import db, login_manager, migrate, socketio,mail
 from config import Config
 from flask_wtf.csrf import CSRFProtect
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
 
 def create_app(config_class=Config):
         """
@@ -22,11 +23,12 @@ def create_app(config_class=Config):
             app (Flask): The configured Flask application instance.
         """
 
-        app = Flask(__name__, template_folder="templates")
+        app = Flask(__name__, template_folder="templates", static_folder="static")
         app.config.from_object(config_class)
         Config.init_app(app)
+        
         app.config['UPLOAD_FOLDER'] = 'static/user_profile-pic'
-        app.config['STATIC_FOLDER'] = '/static'
+        app.config['STATIC_FOLDER'] = 'static'
         app.config['STATIC_URL_PATH'] = '/static'
         
 
@@ -38,7 +40,22 @@ def create_app(config_class=Config):
 
         # Initialize CSRF protection
         csrf = CSRFProtect(app)
-
+        
+        # Initialize SocketIO
+        socketio.init_app(app)
+        
+        # Initialize and configure Mail
+        app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+        app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587)) 
+        app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+        app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+        app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
+        app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
+        app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'False') == 'True'
+        app.config['MAIL_SUPPRESS_SEND'] = False  # Ensure emails are not suppressed
+            
+        mail.init_app(app)
+        
         @login_manager.user_loader
         def load_user(user_id):
             from .models.user_models import Users
