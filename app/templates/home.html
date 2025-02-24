@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collaborative Study Platform</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/home.css') }}">
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+    <!-- Favicon -->
+    <link rel="icon"  sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
+    
 </head>
 <body>
     <!-- Header Section -->
@@ -34,13 +38,19 @@
             <div class="col-md-8">
                 {% if current_user.is_authenticated %}
                     <p class="lead">Welcome, <strong id="username">{{ current_user.username }}</strong></p>
+                    <!-- Search Form -->
+                    <form id="search-form" class="form-inline justify-content-center mt-3">
+                        <input type="text" id="search" name="search" class="form-control mr-2" placeholder="Search Groups or Users...">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
                 {% else %}
                     <p class="lead">Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
                 {% endif %}
             </div>
             <div class="col-md-4 text-right">
                 {% if current_user.is_authenticated %}
-                    <form action="{{ url_for('logout') }}" method="post" class="d-inline">
+                    <form action="{{ url_for('logout') }}" method="post" class="d-inline" onsubmit="return confirmLogout();">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-danger btn-sm">Logout</button>
                     </form>
                     <form action="{{ url_for('account') }}" method="get" class="d-inline">
@@ -56,6 +66,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-5">
                     <form action="{{ url_for('create_group') }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-success">Create a New Group</button>
                     </form>
                 </div>
@@ -65,15 +76,6 @@
                     </form>
                 </div>
             </div>
-        </section>
-
-        <!-- Search Section -->
-        <section class="search-section mt-5">
-            <h2 class="text-center mb-3">Search</h2>
-            <form id="search-form" class="form-inline justify-content-center">
-                <input type="text" id="search" name="search" class="form-control mr-2" placeholder="Search Groups or Users...">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </form>
         </section>
 
         <!-- Search Results Section -->
@@ -99,83 +101,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('search-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-                var query = document.getElementById('search').value;
-
-                fetch('{{ url_for("search") }}?search=' + query)
-                    .then(response => response.json())
-                    .then(data => {
-                        var resultsHtml = '<h4>Search Results</h4>';
-                        var foundResults = false;
-
-                        if (data.users.length > 0) {
-                            resultsHtml += '<h5>Users</h5><ul>';
-                            data.users.forEach(function(user) {
-                                resultsHtml += '<li>' + user.username + '</li>';
-                            });
-                            resultsHtml += '</ul>';
-                            foundResults = true;
-                        }
-
-                        if (data.groups.length > 0) {
-                            resultsHtml += '<h5>Groups</h5><ul>';
-                            data.groups.forEach(function(group) {
-                                resultsHtml += '<li>' + group.name +
-                                               ' <button class="btn btn-info btn-sm join-button" data-group-id="' + group.id +
-                                               '" data-group-name="' + group.name +
-                                               '">Join</button></li>';
-                            });
-                            resultsHtml += '</ul>';
-                            foundResults = true;
-                        }
-
-                        if (!foundResults) {
-                            resultsHtml += '<div class="alert alert-warning">No users or groups found for "<strong>' + query + '</strong>".</div>';
-                        }
-
-                        document.getElementById('search-results').innerHTML = resultsHtml;
-
-                        // Event listeners for join buttons
-                        document.querySelectorAll('.join-button').forEach(function(button) {
-                            button.addEventListener('click', function() {
-                                var groupId = button.getAttribute('data-group-id');
-                                var groupName = button.getAttribute('data-group-name');
-
-                                fetch('{{ url_for("join_group_api") }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded',
-                                    },
-                                    body: 'group_identifier=' + encodeURIComponent(groupName)  // Use group name or referral code
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        alert(data.message);
-                                        button.textContent = "Joined"; // Update button text
-                                        button.disabled = true; // Disable button
-                                        // Redirect to the group page
-                                        const baseUrl = '{{ url_for("group", group_id=0) }}'.replace('/0', '');
-                                        window.location.href = baseUrl + '/' + groupId;
-                                    } else {
-                                        alert('Error: ' + data.message);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('An error occurred while trying to join the group.');
-                                });
-                            });
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        document.getElementById('search-results').innerHTML = '<div class="alert alert-danger">An error occurred while searching. Please try again.</div>';
-                    });
-            });
-        });
+        // Pass the search URL to the JavaScript file
+        const searchUrl = "{{ url_for('search') }}";
     </script>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>
 </html>

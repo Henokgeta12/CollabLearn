@@ -4,161 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Group Study Space</title>
-
+    
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Bootstrap for responsive design -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Styles -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/group.css') }}">
-  
-    <script>
-        function confirmLeaveGroup() {
-            return confirm("Are you sure you want to leave the group?");
-        }
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">
+    <!-- Favicon -->
+    <link rel="icon"  type="image/x-icon" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.ico') }}">
+    <link rel="icon"  type="image/x-icon" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
 
-        // JavaScript to dynamically handle task updates
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-                dropdown.addEventListener('change', function () {
-                    const taskId = this.dataset.taskId;
-                    const groupId = this.dataset.groupId;
-                    const newStatus = this.value;
-
-                    // Send the status update via fetch
-                    fetch(`/group/${groupId}/update_task_status`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ task_id: taskId, status: newStatus })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Task status updated successfully!');
-                        } else {
-                            alert('Error updating task status.');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-                });
-            });
-        });
-    </script>
 </head>
 <body>
+    <div class="container mt-5">
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
 
-<div class="container mt-5">
-    <!-- Flash Messages -->
-    <div class="flash-messages">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
-
-    <!-- Header Section -->
-    <header>
-        <div class="container">
+        <!-- Header Section -->
+        <header>
             <h1>{{ group.name }}</h1>
-            <p>{{ group.description }}</p>
-            <form action="{{ url_for('leave_group', group_id=group.id) }}" method="POST" onsubmit="return confirmLeaveGroup();">
-                <button type="submit" class="btn">
-                    <i class="fas fa-sign-out-alt"></i> Leave Group
-                </button>
-            </form>
-            <form action="{{ url_for('home') }}" method="GET">
-                <button type="submit" class="btn btn-secondary">Home</button>
-            </form>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Messaging Section -->
-        <section id="messages">
-            <h2><i class="fas fa-comments"></i> Group Chat</h2>
-            <div id="message-list">
-                {% for message in messages %}
-                    <div class="message">
-                        <strong>{{ message.user.username }}</strong>: {{ message.content }}
-                        <span class="timestamp">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
-                    </div>
-                {% endfor %}
+            <p class="lead">{{ group.description }}</p>
+            <div class="d-flex justify-content-between">
+                <form action="{{ url_for('leave_group', group_id=group.id) }}" method="POST" onsubmit="return confirmLeaveGroup();">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Leave Group
+                    </button>
+                </form>
+                <form action="{{ url_for('home') }}" method="GET">
+                    <button type="submit" class="btn btn-secondary">Home</button>
+                </form>
             </div>
-            <form action="{{ url_for('group', group_id=group.id) }}" method="POST">
-                {{ message_form.hidden_tag() }}
-                {{ message_form.content(placeholder="Type your message...") }}
-                {{ message_form.submit(class="btn") }}
-            </form>
-        </section>
+        </header>
 
-        <!-- Resource Sharing Section -->
-        <section id="resources">
-            <h2><i class="fas fa-folder-open"></i> Group Resources</h2>
-            <ul>
-                {% for resource in resources %}
-                    <li>
-                        <a href="{{ resource.file_url }}" download>
-                            <i class="fas fa-file-download"></i> {{ resource.filename }}
-                        </a>
-                        <span class="uploaded-by">Uploaded by {{ resource.uploaded_by_user.username }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-            <form action="{{ url_for('upload_resource', group_id=group.id) }}" method="POST" enctype="multipart/form-data">
-                {{ upload_form.hidden_tag() }}
-                {{ upload_form.file() }}
-                {{ upload_form.submit(class="btn") }}
-            </form>
-        </section>
+        <!-- Main Content -->
+        <main class="mt-4">
+            <!-- Notifications Section -->
+            {% if latest_notification %}
+                <section id="notifications">
+                    <h2><i class="fas fa-bell"></i> Latest Notification</h2>
+                    <div class="notification">
+                        {{ latest_notification.message }}
+                        <span class="timestamp">{{ latest_notification.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                </section>
+            {% endif %}
 
-        <!-- Group Notes Section -->
-        <section id="notes">
-            <h2><i class="fas fa-sticky-note"></i> Group Notes</h2>
-            <form action="{{ url_for('save_group_notes', group_id=group.id) }}" method="POST">
-                {{ group_notes_form.hidden_tag() }}
-                {{ group_notes_form.content(placeholder="Collaborate on group notes...") }}
-                {{ group_notes_form.submit(class="btn") }}
-            </form>
-        </section>
+            <!-- Messaging Section -->
+            <section id="messages">
+                <h2><i class="fas fa-comments"></i> Group Chat</h2>
+                <div id="message-list">
+                    {% for message in messages %}
+                        <div class="message">
+                            <strong>{{ message.user.username }}</strong>: {{ message.content }}
+                            <span class="timestamp">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <form id="message-form" action="{{ url_for('send_message', group_id=group.id) }}" method="POST">
+                    {{ message_form.hidden_tag() }}
+                    {{ message_form.content(class="form-control", placeholder="Type your message...") }}
+                    {{ message_form.submit(class="btn btn-primary") }}
+                </form>
+            </section>
 
-        <!-- Task Management Section -->
-        <section id="tasks">
-            <h2><i class="fas fa-tasks"></i> Task Management</h2>
-            <ul>
-                {% for task in tasks %}
-                    <li>
-                        {{ task.description }} -
-                        <strong>{{ task.status }}</strong>
-                        <form action="{{ url_for('update_task_status', group_id=group.id) }}" method="POST" style="display:inline;">
-                            {{ update_task_status_form.hidden_tag() }}
-                            <input type="hidden" name="task_id" value="{{ task.id }}">
-                            {{ update_task_status_form.status(data_task_id=task.id, data_group_id=group.id, class="status-dropdown") }}
-                            {{ update_task_status_form.submit(class="btn btn-sm") }}
-                        </form>
-                    </li>
-                {% endfor %}
-            </ul>
-            <form action="{{ url_for('create_task', group_id=group.id) }}" method="POST">
-                {{ task_form.hidden_tag() }}
-                {{ task_form.task_description(placeholder="New task description") }}
-                {{ task_form.submit(class="btn") }}
-            </form>
-        </section>
-    </main>
+            <!-- Resource Sharing Section -->
+            <section id="resources">
+                <h2><i class="fas fa-folder-open"></i> Group Resources</h2>
+                <ul class="list-group">
+                    {% for resource in resources %}
+                        <li class="list-group-item">
+                            <a href="{{ resource.file_url }}" download>
+                                <i class="fas fa-file-download"></i> {{ resource.filename }}
+                            </a>
+                            <span class="uploaded-by">Uploaded by {{ resource.uploaded_by_user.username }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <form action="{{ url_for('upload_resource', group_id=group.id) }}" method="POST" enctype="multipart/form-data" class="mt-3">
+                    {{ upload_form.hidden_tag() }}
+                    {{ upload_form.file(class="form-control") }}
+                    {{ upload_form.submit(class="btn btn-success") }}
+                </form>
+            </section>
 
-    <!-- Footer Section -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
-        </div>
-    </footer>
+            <!-- Group Notes Section -->
+            <section id="notes">
+                <h2><i class="fas fa-sticky-note"></i> Group Notes</h2>
+                <ul class="list-group">
+                    {% if group_notes %}
+                        <li class="list-group-item">
+                            <span class="uploaded-by">Notes - {{ group_notes.updated_by_user.username }} {{ group_notes.content  }} </span>
+                        </li>
+                    {% endif %}
+                </ul>
+                <form action="{{ url_for('save_group_notes', group_id=group.id) }}" method="POST">
+                    {{ group_notes_form.hidden_tag() }}
+                    {{ group_notes_form.content(class="form-control", placeholder="Collaborate on group notes...") }}
+                    {{ group_notes_form.submit(class="btn btn-info") }}
+                </form>
+            </section>
 
-    <!-- External Scripts -->
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-    <script src="{{ url_for('static', filename='group.js') }}"></script>
-</body>
+            <!-- Task Management Section -->
+            <section id="tasks">
+                <h2><i class="fas fa-tasks"></i> Task Management</h2>
+                <ul class="list-group">
+                    {% for task in tasks %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                {{ task.task_description  }} - <strong>{{ task.status }}</strong>
+                            </div>
+                            <form action="{{ url_for('update_task_status', group_id=group.id) }}" method="POST" class="mb-0">
+                                {{ update_task_status_form.hidden_tag() }}
+                                <input type="hidden" name="task_id" value="{{ task.id }}">
+                                {{ update_task_status_form.status(data_task_id=task.id, data_group_id=group.id, class="form-control d-inline-block w-auto") }}
+                                {{ update_task_status_form.submit(class="btn btn-sm btn-secondary") }}
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <form action="{{ url_for('create_task', group_id=group.id) }}" method="POST" class="mt-3">
+                    {{ task_form.hidden_tag() }}
+                    {{ task_form.task_description(class="form-control", placeholder="New task description") }}
+                    {{ task_form.submit(class="btn btn-primary") }}
+                </form>
+            </section>
+        </main>
+
+        <!-- Footer Section -->
+        <footer>
+            <div class="container">
+                <p>&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!-- External Scripts -->
+        <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+        <script src="{{ url_for('static', filename='js/group.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    </body>
 </html>

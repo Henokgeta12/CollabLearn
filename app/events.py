@@ -1,9 +1,12 @@
 from flask import request, jsonify
-from flask_socketio import emit, join_room
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from app.models.group_models import Messages, StudyGroups
 from app.extensions import socketio, db
 from flask_login import current_user
+from datetime import datetime
 
+
+socketio = SocketIO()
 @socketio.on('join')
 def on_join(data):
     """Handles when a user joins a group room."""
@@ -13,6 +16,13 @@ def on_join(data):
     # Notify other users in the room that a new user has joined
     emit('user_joined', {'user': current_user.username}, room=group_id)
 
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
 @socketio.on('send_message')
 def handle_send_message(data):
     """Handles sending messages in real-time."""

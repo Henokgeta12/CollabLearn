@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/account.css') }}"> 
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}"> 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
 </head>
 <body>
     <div class="container mt-5">
@@ -32,7 +34,7 @@
                 <div class="card shadow-sm">
                     <img class="card-img-top rounded-circle mx-auto d-block mt-4"
                          src="{{ img_file }}"
-                         alt="Profile Picture"
+                         alt="Profile Picture of {{ current_user.username }}"
                          style="width: 150px; height: 150px;">
                     <div class="card-body text-center">
                         <h5 class="card-title font-weight-bold">{{ current_user.username }}</h5>
@@ -94,6 +96,25 @@
                         </form>
                     </div>
                 </div>
+                
+                <!-- Verify Email Form -->
+                {% if not verified %}
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Verify Email</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('send_verification') }}">
+                                {{ verify_form.hidden_tag() }}
+                                <button type="submit" class="btn btn-primary btn-block">Verify Email</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success text-center">
+                        ✅ Your email is verified!
+                    </div>
+                {% endif %}
 
                 <!-- Created Groups -->
                 <div class="card mb-4 shadow-sm">
@@ -116,8 +137,8 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         // Fetch account info and populate the page

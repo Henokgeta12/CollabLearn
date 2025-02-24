@@ -1,32 +1,26 @@
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+        dropdown.addEventListener('change', function () {
+            const taskId = this.dataset.taskId;
+            const groupId = this.dataset.groupId;
+            const newStatus = this.value;
 
-// Join the room
-socket.emit('join', {'group_id': "{{ group.id }}"});
-
-// Listen for incoming messages
-socket.on('receive_message', function(data) {
-    var messageList = document.getElementById('message-list');
-    var newMessage = document.createElement('div');
-    newMessage.classList.add('message');
-    newMessage.innerHTML = `<strong>${data.user}</strong>: ${data.content} <span class="timestamp">${data.created_at}</span>`;
-    messageList.appendChild(newMessage);
-});
-
-// Handle form submission
-var form = document.querySelector('form');
-form.onsubmit = function(event) 
-{
-    event.preventDefault();
-    var content = document.querySelector('textarea[name="content"]').value;
-    socket.emit('send_message', { group_id: group.id, content: content }, function(ack) {
-        console.log('Message acknowledged by server:', ack);
+            // Send the status update via fetch
+            fetch(`/group/${groupId}/update_task_status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task_id: taskId, status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Task status updated successfully!');
+                } else {
+                    alert('Error updating task status.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
     });
-    form.reset();
-};
-
-socket.on('disconnect', function() {
-    alert('You have been disconnected from the chat.');
-}); 
-socket.on('error', function(data) {
-    alert('Error: ' + data.error);
 });
+

@@ -1,13 +1,56 @@
-html, body {
-    height: 100%;
-}
 body {
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
-.content {
-    flex: 1 0 auto;
+.container {
+    flex: 1;
+}
+.header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px 0;
+}
+.header h1 {
+    font-size: 2.5rem;
 }
 .footer {
-    flex-shrink: 0;
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    margin-top: auto;
+}
+.project-description {
+    margin: 40px 0;
+    text-align: center;
+}
+.project-description h2 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.project-description p {
+    font-size: 1.2em;
+    color: #555;
+}
+.search-section {
+    margin-bottom: 40px;
+}
+.group-actions {
+    margin-top: 40px;
+}
+.group-actions .btn {
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+.btn-primary, .btn-success, .btn-info {
+    transition: background-color 0.3s ease;
+}
+.btn-primary:hover, .btn-success:hover, .btn-info:hover {
+    opacity: 0.9;
+}
+.logo {
+    width: 100px; /* Adjust size */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Center it */
 }
