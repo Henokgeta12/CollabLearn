@@ -8,16 +8,19 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
     <!-- Favicon -->
-    <link rel="icon"  sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.ico') }}">
-    <link rel="icon"  sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
 </head>
 <body>
     <div class="container-fluid p-0">
         <header class="hero">
             <div class="hero-overlay">
                 <h1>Welcome to Collab Study Platform</h1>
+                <div class="col-auto">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
+                </div>
             </div>
         </header>
+
 
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
@@ -65,7 +68,7 @@
         </section>
 
         <footer class="footer text-center py-3">
-            <p>&copy; 2024 Collab Study Platform. All rights reserved.</p>
+            <p>&copy; 2025 Collab Study Platform. All rights reserved.</p>
         </footer>
     </div>
 

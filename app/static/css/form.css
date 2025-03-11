@@ -52,3 +52,14 @@ body {
     text-align: center;
     margin-top: 20px;
 }
+.logo {
+    width: 100px; /* Adjust size */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Center it */
+}
+.logo {
+    width: 130px;
+    height: auto;
+    margin: 15px auto;
+}

@@ -6,9 +6,8 @@
     <title>Account</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}"> 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.ico') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
+
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
 </head>
 <body>
     <div class="container mt-5">
@@ -26,6 +25,9 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
+        </div>
+        <div class="col-auto">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
         </div>
 
         <!-- Profile Section -->
@@ -135,7 +137,12 @@
             </div>
         </div>
     </div>
-
+      <!-- Footer Section -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <p class="text-center">&copy; 2025 Collaborative Study Platform. All rights reserved.</p>
+        </div>
+    </footer>
     <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2"></script>

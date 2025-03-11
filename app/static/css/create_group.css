@@ -83,3 +83,10 @@ body {
     font-size: 1rem;
     font-weight: 500;
 }
+.logo {
+    width: 100px; /* Adjust size */
+    height: auto;
+    display: block;
+    float: left;
+    margin: 10px 0; /* Center it */
+}

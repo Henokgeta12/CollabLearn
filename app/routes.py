@@ -1,11 +1,11 @@
 from flask import Flask, request, redirect, url_for, flash, render_template, jsonify,send_from_directory
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import RegistrationForm, LoginForm, UpdateProfileForm, Update_Acc_Form, JoinGroupForm, CreateGroupForm, MessageForm, UploadResourceForm, TaskForm, UpdateTaskStatusForm, GroupNotesForm,JoinGroupForm,VerifyEmailForm
+from .forms import RegistrationForm, LoginForm, UpdateProfileForm, Update_Acc_Form, JoinGroupForm, CreateGroupForm, MessageForm, UploadResourceForm, TaskForm, UpdateTaskStatusForm, GroupNotesForm,JoinGroupForm,VerifyEmailForm, ConfirmPasswordForm,ResetPasswordForm,RequestResetForm
 from .models.user_models import db, Users
 from .models.group_models import StudyGroups, GroupMemberships, GroupResources
 from .models.collaboration_models import Messages, GroupNotes, GroupTasks, GroupMessages
 from .models.notification_models import Notifications
-from .extensions import allowed_file,socketio,send_verification_email,verifyEmail
+from .extensions import allowed_file,socketio,send_verification_email,verifyEmail,reset_password,send_password_reset
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
@@ -686,19 +686,31 @@ def register_routes(app):
         POST:
             Updates the current user's profile information if the submitted form is valid.
         """
+        img_file = url_for('static', filename='user_profile-pic/' + current_user.profile_img)
 
         account_form = Update_Acc_Form()
         profile_form = UpdateProfileForm()
         verify_form = VerifyEmailForm()
+        
+        if request.method == 'GET':
+            account_form.username.data = current_user.username
+            account_form.email.data = current_user.email
 
         if request.method == 'POST' and account_form.validate_on_submit():
-            current_user.username = account_form.username.data
-            current_user.email = account_form.email.data
-            db.session.commit()
-            flash('Account information updated successfully!', 'success')
-            return redirect(url_for('account'))
+            if account_form.email.data != current_user.email:
+                email = account_form.email.data
+                send_verification_email(email)
+                flash('A verification email has been sent to your new email address.', 'info')
+                return redirect(url_for('confirm_email_change', new_email=email))
+            elif account_form.username.data != current_user.username:
+                current_user.username = account_form.username.data 
+                flash('Account information updated successfully!', 'success')
+                return redirect(url_for('update_profile'))
+            else:
+                flash('No changes were made to your profile.','info')
+                return redirect(url_for('update_profile'))
 
-        return render_template('account.html',verified=current_user.is_verified, account_form=account_form, profile_form = profile_form ,verify_form = verify_form)
+        return render_template('account.html',img_file = img_file,verified=current_user.is_verified, account_form=account_form, profile_form = profile_form ,verify_form = verify_form)
 
     @app.route('/get_account_info', methods=['GET'])
     @login_required
@@ -789,3 +801,79 @@ def register_routes(app):
         except Exception as e:
             db.session.rollback()
             flash(f'An error occurred : {str(e)}', 'danger')
+
+    @app.route('/confirm_email_change/<new_email>', methods=['GET', 'POST'])
+    @login_required
+    def confirm_email_change(new_email):
+        form =  ConfirmPasswordForm()
+        if form.validate_on_submit():
+            user = Users.query.filter_by(username=current_user.username).first()
+            if user.check_password(form.password.data):
+                try:
+                    current_user.email = new_email
+                    current_user.is_verified = False
+                    db.session.commit()
+                    flash('Your email has been updated. Please verify your new email address.', 'success')
+                    return redirect(url_for('account'))
+                except Exception as e:
+                    db.session.rollback()
+                    flash(f'An error occurred : {str(e)}', 'danger')
+            else:
+                flash('Incorrect password.', 'danger')
+        return render_template('confirm_email_change.html', form=form, new_email=new_email)
+    
+    @app.route('/request_reset', methods=['GET', 'POST'])
+    def request_reset():
+        form = RequestResetForm()
+        if form.validate_on_submit():
+            # If the user is authenticated, check their email
+            if current_user.is_authenticated:
+                if form.email.data == current_user.email:
+                    send_password_reset(current_user.email)
+                    flash('A password reset link has been sent to your email.', 'info')
+                    return redirect(url_for('login'))
+                else:
+                    flash('You can only request a password reset for your own email.', 'danger')
+            else:
+                # Check if the email exists in the database
+                user = Users.query.filter_by(email=form.email.data).first()
+                if user:  # Only send email if user exists!
+                    send_password_reset(user.email)
+                    flash('A password reset link has been sent to your email.', 'info')
+                    return redirect(url_for('login'))
+                else:
+                    flash('No account found with that email.', 'danger')
+        return render_template('request_reset.html', form=form)
+
+    
+    @app.route('/reset_password/<token>', methods=['GET', 'POST'])
+    def reset_password(token):
+        form = ResetPasswordForm()
+        if form.validate_on_submit():
+            try:
+                email = reset_password(token)
+                user = User.query.filter_by(email=email).first()
+                if user and email:
+                    user.set_password(email)
+                    db.session.commit()
+                    flash('Your password has been updated!', 'success')
+                    return redirect(url_for('login'))
+                else:
+                    flash('The password reset link is invalid or has expired.', 'danger')
+            except:
+                flash('The password reset link is invalid or has expired.', 'danger')
+        return render_template('reset_password.html', form=form)
+    
+    @app.route('/reset_success', methods=['GET', 'POST'])
+    def reset_success():
+        return render_template('reset_success.html')
+    
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return jsonify({"error": "Not Found", "message": "The requested URL was not found on the server."}), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return jsonify({"error": "Internal Server Error", "message": "An internal error occurred."}), 500
+
+    

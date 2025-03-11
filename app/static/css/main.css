@@ -49,3 +49,10 @@
             background-color: #5a6268;
             border-color: #5a6268;
         }
+        .logo {
+            width: 100px; /* Adjust size */
+            height: auto;
+            display: block;
+            float: left;
+            margin: 10px 0; /* Center it */
+        }

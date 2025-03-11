@@ -60,3 +60,9 @@ body {
 .footer p {
     margin: 0;
 }
+.logo {
+    width: 200px; /* Adjust size */
+    height: auto;
+    display: block;
+    margin: 10px auto; /* Center it */
+}

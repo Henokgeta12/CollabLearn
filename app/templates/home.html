@@ -7,15 +7,18 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-
     <!-- Favicon -->
-    <link rel="icon"  sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
-    
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
+
+
 </head>
 <body>
     <!-- Header Section -->
     <header class="header text-center">
         <div class="container">
+            <div class="col-auto">
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
+            </div>
             <h1>Collaborative Study Platform</h1>
             <p class="lead">A place to create, join, and collaborate in study groups.</p>
         </div>
@@ -93,7 +96,7 @@
     <!-- Footer Section -->
     <footer class="footer mt-5">
         <div class="container">
-            <p class="text-center">&copy; 2024 Collaborative Study Platform. All rights reserved.</p>
+            <p class="text-center">&copy; 2025 Collaborative Study Platform. All rights reserved.</p>
         </div>
     </footer>
 

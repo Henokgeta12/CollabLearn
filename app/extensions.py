@@ -21,7 +21,7 @@ mail = Mail()
 
 def send_verification_email(email):
     try:
-        token = serializer.dumps(email, salt='email-verification-salt',max_age=1800)
+        token = serializer.dumps(email, salt='email-verification-salt')
         link = url_for('verify_email', token=token, _external=True)
         msg = Message('Welcome Confirm Your Email', recipients=[email])
         msg.body = f"Hello,\n\nPlease confirm your email by clicking the link below:\n{link}\n\nIf you didn’t request this, please ignore this email."
@@ -39,7 +39,27 @@ def verifyEmail(token):
     except Exception as e:
         return flash('Invalid or expired token','error')
         return None
-    
+
+def send_password_reset(email):
+    try:
+        token = serializer.dumps(email, salt='password-reset-salt')
+        link = url_for('reset_password', token=token, _external=True)
+        msg = Message('Password Reset Request ', recipients=[email])
+        msg.body = f"Hello,\n\nPlease confirm your email to reset your password :\n{link}\n\nIf you didn’t request this, please ignore this email."
+        msg.html = render_template('reset_email.html', link=link)
+        mail.send(msg)
+        flash('A password reset link has been sent to your email.', 'success')
+    except Exception as e:
+        print(f"Error sending email: {e}")  # Log the error for debugging
+
+def reset_password(token):
+    try:
+        # Decode the token
+        email = serializer.loads(token, salt='password-reset-salt')
+        return str(email)
+    except Exception as e:
+        return flash('Invalid or expired token','error')
+        return None
 
 def allowed_file(filename):
     """

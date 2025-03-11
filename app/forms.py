@@ -145,3 +145,17 @@ class MessageForm(FlaskForm):
     
 class VerifyEmailForm(FlaskForm):
     submit = SubmitField('Verify Email')
+
+class ConfirmPasswordForm(FlaskForm):
+    password = PasswordField('Current Password', validators=[DataRequired()])
+    submit = SubmitField('Confirm')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

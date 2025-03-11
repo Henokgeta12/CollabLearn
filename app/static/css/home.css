@@ -7,7 +7,7 @@ body {
     flex: 1;
 }
 .header {
-    background-color: #007bff;
+    background-color:#7dbcfc;
     color: white;
     padding: 20px 0;
 }
@@ -52,5 +52,6 @@ body {
     width: 100px; /* Adjust size */
     height: auto;
     display: block;
-    margin: 0 auto; /* Center it */
+    float: left;
+    margin: 10px 0; /* Center it */
 }

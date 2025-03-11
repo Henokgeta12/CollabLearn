@@ -7,16 +7,18 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}"> 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-     <!-- Favicon -->
-     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.ico') }}">
-     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
-
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
 </head>
 <body>
     <div class="container">
+        <div class="col-auto">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
+        </div>
         <div class="intro">
             <h2>Sign Up</h2>
         </div>
+
 
         <!-- Flash Message Display -->
         <div class="flash-messages">

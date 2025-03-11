@@ -4,7 +4,9 @@ __pycache__/
 
 # Ignore virtual environment directory
 venv/
-static/user_profile-pic
+
+# Ignore user profile pictures directory
+static/user_profile-pic/
 
 # Ignore environment files
 *.flaskenv
@@ -16,4 +18,3 @@ static/user_profile-pic
 *.bak
 *.swp
 *.DS_Store
-

@@ -37,3 +37,10 @@ footer {
 .btn {
     margin-top: 10px;
 }
+.logo {
+    width: 100px; /* Adjust size */
+    height: auto;
+    display: block;
+    float: left;
+    margin: 10px 0; /* Center it */
+}
