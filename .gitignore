@@ -6,7 +6,7 @@ __pycache__/
 venv/
 
 # Ignore user profile pictures directory
-user_profile-pic/*
+app/static/user_profile-pic/
 
 # Ignore environment files
 *.flaskenv

@@ -1,10 +1,19 @@
-# Collaborative-Study
+CollabLearn: Collaborative Study Platform
 Welcome to CollabLearn, a web application designed to facilitate collaborative learning among students. This platform enables users to create or join study groups, communicate in real-time, and share resources like notes and files. Our goal is to help students stay organized, collaborate effectively, and make learning more engaging.
 
-Note: This project is currently in its Minimum Viable Product (MVP) stage. An MVP is a version of a product with just enough features to be usable by early customers who can then provide feedback for future development. 
+Note: This project is currently in its Minimum Viable Product (MVP) stage. An MVP is a version of a product with just enough features to be usable by early customers who can then provide feedback for future development.
 
+Table of Contents
+Features
+Tech Stack
+Installation
+Usage
+Contributing
+License
+Contact
 Features
 User Registration and Authentication: Secure sign-up and login processes to protect user data.
+Email Change and Password Reset: Users can update their email addresses and reset their passwords securely.
 Study Group Management: Create, join, and manage study groups tailored to specific subjects or projects.
 Real-Time Messaging: Engage in instant communication within study groups to facilitate seamless collaboration.
 Resource Sharing: Upload and manage group resources, including notes, files, and links.
@@ -15,38 +24,28 @@ Frontend: HTML, CSS, Basic JavaScript
 Backend: Python, Flask, SQLAlchemy (ORM)
 Database: MySQL
 Installation
-To set up the project locally:
+To set up the project locally, follow these steps:
 
-Clone the Repository:
-
-Edit
+Clone the Repository
+Copy
 git clone https://github.com/Henokgeta12/CollabLearn.git
 cd CollabLearn
-Set Up a Virtual Environment:
-
-
-Edit
+Set Up a Virtual Environment
+Copy
 python3 -m venv venv
-source venv/bin/activate  # On Windows, use venv\Scripts\activate
-Install Dependencies:
-
-
-Edit
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+Install Dependencies
+Copy
 pip install -r requirements.txt
-Configure the Database:
-
+Configure the Database
 Ensure MySQL is installed and running.
 Create a database named collablearn.
 Update the database configuration in config.py with your MySQL credentials.
-Apply Migrations:
-
-
-Edit
+Apply Migrations
+Copy
 flask db upgrade
-Run the Application:
-
-
-Edit
+Run the Application
+Copy
 flask run
 Access the application at http://127.0.0.1:5000/.
 
