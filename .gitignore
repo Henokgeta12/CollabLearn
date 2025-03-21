@@ -4,7 +4,8 @@ __pycache__/
 
 # Ignore virtual environment directory
 venv/
-
+*.zip
+*.mp4
 # Ignore user profile pictures directory
 /app/static/user_profile-pic/
 
