@@ -34,7 +34,7 @@
                 <!-- End Flash Message Display -->
 
                 <h4 class="text-center">Sign In</h4>
-                <form method="POST" action="{{ url_for('login') }}">
+                <form method="POST" action="{{ url_for('auth.login') }}">
                     {{ form.hidden_tag() }}
                     <div class="form-group">
                         <label for="username">Username:</label>
@@ -70,7 +70,7 @@
 
                 <div class="text-center mt-4">
                     <h6>Don't have an account?</h6>
-                    <form method="POST" action="{{ url_for('register') }}">
+                    <form method="POST" action="{{ url_for('auth.register') }}">
                         {{ form.hidden_tag() }}
                         <button type="submit" class="btn btn-outline-primary btn-block">Sign Up</button>
                     </form>
@@ -78,7 +78,7 @@
                 
                 <!-- Forgot Password Link -->
                 <div class="text-center mt-3">
-                    <a href="{{ url_for('request_reset') }}" class="text-primary">Forgot Password?</a>
+                    <a href="{{ url_for('user.request_reset') }}" class="text-primary">Forgot Password?</a>
                 </div>
 
             </div>

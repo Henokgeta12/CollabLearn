@@ -37,7 +37,7 @@
                         <h4 class="mb-0">Confirm Email Change</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ url_for('confirm_email_change', new_email=new_email) }}">
+                        <form method="POST" action="{{ url_for('user.confirm_email_change', new_email=new_email) }}">
                             {{ form.hidden_tag() }}
 
                             <!-- Password Field -->

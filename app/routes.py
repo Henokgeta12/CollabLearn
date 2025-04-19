@@ -372,14 +372,15 @@ def register_routes(app):
                 return redirect(url_for('group', group_id=group_id))
 
             new_message = Messages(
-                group_id=group_id,
-                user_id=current_user.id,
-                content=content
+                group_id = group_id,
+                user_id = current_user.id,
+                content = content
             )
             db.session.add(new_message)
             db.session.commit()
 
-            socketio.emit('receive_message', {
+            socketio.emit('receive_message', 
+            {
                 'user': current_user.username,
                 'content': content,
                 'created_at': new_message.created_at.strftime('%Y-%m-%d %H:%M')

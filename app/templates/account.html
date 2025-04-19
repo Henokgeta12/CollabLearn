@@ -72,7 +72,7 @@
                         <h4 class="mb-0">Update Account Information</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ url_for('update_profile') }}">
+                        <form method="POST" action="{{ url_for('user.update_profile') }}">
                             {{ account_form.hidden_tag() }}
 
                             <!-- Username Field -->
@@ -106,7 +106,7 @@
                             <h4 class="mb-0">Verify Email</h4>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ url_for('send_verification') }}">
+                            <form method="POST" action="{{ url_for('user.send_verification') }}">
                                 {{ verify_form.hidden_tag() }}
                                 <button type="submit" class="btn btn-primary btn-block">Verify Email</button>
                             </form>
@@ -132,7 +132,7 @@
 
                 <!-- Navigation Button -->
                 <div class="mt-4 text-center">
-                    <a href="{{ url_for('home') }}" class="btn btn-secondary">Go to Home</a>
+                    <a href="{{ url_for('main.home') }}" class="btn btn-secondary">Go to Home</a>
                 </div>
             </div>
         </div>
@@ -150,7 +150,7 @@
     <script>
         // Fetch account info and populate the page
         document.addEventListener('DOMContentLoaded', function () {
-            fetch('/get_account_info')
+            fetch('/main/get_account_info')
                 .then(response => response.json())
                 .then(data => {
                     // Populate created groups

@@ -52,7 +52,7 @@
                         <h4 class="mb-0">Request Password Reset</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ url_for('request_reset') }}">
+                        <form method="POST" action="{{ url_for('user.request_reset') }}">
                             {{ form.hidden_tag() }}
                             <div class="form-group">
                                 {{ form.email.label(class="form-label font-weight-bold") }}

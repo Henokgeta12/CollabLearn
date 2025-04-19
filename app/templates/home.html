@@ -47,16 +47,16 @@
                         <button type="submit" class="btn btn-primary">Search</button>
                     </form>
                 {% else %}
-                    <p class="lead">Please <a href="{{ url_for('login') }}">log in</a> or <a href="{{ url_for('register') }}">register</a>.</p>
+                    <p class="lead">Please <a href="{{ url_for('auth.login') }}">log in</a> or <a href="{{ url_for('user.register') }}">register</a>.</p>
                 {% endif %}
             </div>
             <div class="col-md-4 text-right">
                 {% if current_user.is_authenticated %}
-                    <form action="{{ url_for('logout') }}" method="post" class="d-inline" onsubmit="return confirmLogout();">
+                    <form action="{{ url_for('auth.logout') }}" method="post" class="d-inline" onsubmit="return confirmLogout();">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-danger btn-sm">Logout</button>
                     </form>
-                    <form action="{{ url_for('account') }}" method="get" class="d-inline">
+                    <form action="{{ url_for('user.account') }}" method="get" class="d-inline">
                         <button type="submit" class="btn btn-primary btn-sm">Account</button>
                     </form>
                 {% endif %}
@@ -68,13 +68,13 @@
             <h2 class="mb-4">Group Actions</h2>
             <div class="row justify-content-center">
                 <div class="col-md-5">
-                    <form action="{{ url_for('create_group') }}" method="post">
+                    <form action="{{ url_for('group.create_group') }}" method="post">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-success">Create a New Group</button>
                     </form>
                 </div>
                 <div class="col-md-5">
-                    <form action="{{ url_for('join_group') }}" method="get">
+                    <form action="{{ url_for('group.join_group') }}" method="get">
                         <button type="submit" class="btn btn-info">Join an Existing Group</button>
                     </form>
                 </div>
@@ -105,7 +105,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         // Pass the search URL to the JavaScript file
-        const searchUrl = "{{ url_for('search') }}";
+        const searchUrl = "{{ url_for('main.search') }}";
     </script>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>

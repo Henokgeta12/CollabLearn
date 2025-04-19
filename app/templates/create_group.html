@@ -33,7 +33,7 @@
             <h1>Create a New Group</h1>
             <div class="user-info">
                 <p>Welcome, <span id="username">{{ current_user.username }}</span></p>
-                <form action="{{ url_for('home') }}" method="GET">
+                <form action="{{ url_for('main.home') }}" method="GET">
                     <button type="submit" class="btn btn-secondary">Home</button>
                 </form>
 
@@ -42,7 +42,7 @@
 
         <!-- Main Content Section -->
         <main>
-            <form method="POST" action="{{ url_for('create_group') }}" class="create-group-form">
+            <form method="POST" action="{{ url_for('group.create_group') }}" class="create-group-form">
                 {{ form.hidden_tag() }} <!-- CSRF token -->
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-group">

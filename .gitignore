@@ -12,6 +12,7 @@ venv/
 # Ignore environment files
 *.flaskenv
 *.env
+*.gitattributes
 
 # Ignore other common files and directories
 *.log

@@ -1,18 +1,45 @@
 // Connect to Socket.IO
-const socket = io.connect('http://' + document.domain + ':' + location.port);
+const socket = io.connect('http://localhost:3000');
 
+const username = "{current_user.username}";
+const group_id = "{group_id}";
+const userId = "{{ current_user.id }}";
+
+function displaymessage(msg) 
+{
+    const chat = document.getElementById('message-list');
+    const div = document.createElement('div');
+    div.classList.add('div');
+    div.innerHTML = `<strong>${msg.user}</strong>: ${msg.content} <span class="timestamp">${msg.created_at}</span>`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight; // Scroll to the bottom
+}
+
+socket.on('welcome', function(data) 
+{
+    displaymessage(data);
+})
 // Listen for messages from the server
-socket.on('receive_message', function(data) {
-    const messageList = document.getElementById('message-list');
-    const newMessage = document.createElement('div');
-    newMessage.classList.add('message');
-    newMessage.innerHTML = `<strong>${data.user}</strong>: ${data.content} <span class="timestamp">${data.created_at}</span>`;
-    messageList.appendChild(newMessage);
-    messageList.scrollTop = messageList.scrollHeight; // Scroll to the bottom
+socket.on('chat message', function(data) {
+    displaymessage(data);
 });
 
+// Listen for messages from the server
+socket.on('error', function(data) {
+    displaymessage(data);
+});
+
+function displaymessage(msg) 
+{
+    const chat = document.getElementById('message-list');
+    const div = document.createElement('div');
+    div.classList.add('div');
+    div.innerHTML = `<strong>${msg.user}</strong>: ${msg.content} <span class="timestamp">${msg.created_at}</span>`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
 // Send message function
-function sendMessage() 
+function sendMessage(data) 
 {
     const content = document.querySelector('input[name="content"]').value;
 
@@ -24,7 +51,9 @@ function sendMessage()
 
     // Emit the message to the server
     socket.emit('send_message', {
-        group_id: group.id ,
+        group_id: groupId,
+        user_id: userId,
+        username: username,
         content: content
     });
 

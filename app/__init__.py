@@ -1,6 +1,12 @@
 from flask import Flask
 from .extensions import db, login_manager, migrate, socketio,mail
 from config import Config
+from .routes.groups.group_routes import group_bp
+from .routes.user.user_routes import user_bp
+from .routes.authentication.auth_routes import auth_bp 
+from .routes.main.main import main_bp
+from .routes.groups.groupfunctions_routes import groupfunctions_bp
+from .routes.errors.handler import errors_bp
 from flask_wtf.csrf import CSRFProtect
 import os
 from dotenv import load_dotenv
@@ -24,18 +30,21 @@ def create_app(config_class=Config):
         """
 
         app = Flask(__name__, template_folder="templates", static_folder="static")
+        
+        app.register_blueprint(main_bp)
+        app.register_blueprint(auth_bp, url_prefix='/auth')
+        app.register_blueprint(user_bp, url_prefix='/user')
+        app.register_blueprint(group_bp, url_prefix='/group')
+        app.register_blueprint(groupfunctions_bp, url_prefix='/groupfunctions')
+        app.register_blueprint(errors_bp, url_prefix='/error')
+        
         app.config.from_object(config_class)
         Config.init_app(app)
         
-        app.config['UPLOAD_FOLDER'] = 'static/user_profile-pic'
-        app.config['STATIC_FOLDER'] = 'static'
-        app.config['STATIC_URL_PATH'] = '/static'
-        
-
         # Initialize extensions
         db.init_app(app)
         login_manager.init_app(app)
-        login_manager.login_view = 'login'
+        login_manager.login_view = 'auth.login'
         migrate.init_app(app, db)
 
         # Initialize CSRF protection
@@ -44,27 +53,13 @@ def create_app(config_class=Config):
         # Initialize SocketIO
         socketio.init_app(app)
         
-        # Initialize and configure Mail
-        app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
-        app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587)) 
-        app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-        app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-        app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
-        app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
-        app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'False') == 'True'
-        app.config['MAIL_SUPPRESS_SEND'] = False  # Ensure emails are not suppressed
-            
+        # Initialize and configure Mail            
         mail.init_app(app)
         
         @login_manager.user_loader
         def load_user(user_id):
             from .models.user_models import Users
             return Users.query.get(int(user_id))
-
-        # Register routes
-        with app.app_context():
-            from app.routes import register_routes
-            register_routes(app)
 
         return app
 

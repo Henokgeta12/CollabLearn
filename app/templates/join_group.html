@@ -10,11 +10,10 @@
     <!-- Bootstrap for responsive design -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/join_group.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/join_group.css') }}">
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.ico') }}">
-
 
 </head>
 <body>
@@ -51,7 +50,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <form action="{{ url_for('home') }}" method="GET" class="d-inline">
+                            <form action="{{ url_for('main.home') }}" method="GET" class="d-inline">
                                 <button type="submit" class="btn home-button">Home</button>
                             </form>
                         </li>
@@ -79,7 +78,7 @@
                             </p>
 
                             <!-- Corrected form setup -->
-                            <form method="POST" action="{{ url_for('join_group') }}">
+                            <form method="POST" action="{{ url_for('group.join_group') }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <input type="hidden" name="group_id" value="{{ group.id }}">
                                 <button type="submit" class="btn btn-primary">Join Group</button>
@@ -100,7 +99,7 @@
                 <ul class="pagination justify-content-center">
                     {% if pagination.has_prev %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ url_for('join_group', page=pagination.prev_num) }}" aria-label="Previous">
+                            <a class="page-link" href="{{ url_for('group.join_group', page=pagination.prev_num) }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -108,7 +107,7 @@
                     {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
                         {% if page_num %}
                             <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
-                                <a class="page-link" href="{{ url_for('join_group', page=page_num) }}">{{ page_num }}</a>
+                                <a class="page-link" href="{{ url_for('group.join_group', page=page_num) }}">{{ page_num }}</a>
                             </li>
                         {% else %}
                             <li class="page-item disabled"><span class="page-link">…</span></li>
@@ -116,7 +115,7 @@
                     {% endfor %}
                     {% if pagination.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ url_for('join_group', page=pagination.next_num) }}" aria-label="Next">
+                            <a class="page-link" href="{{ url_for('group.join_group', page=pagination.next_num) }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>

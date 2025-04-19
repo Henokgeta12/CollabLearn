@@ -15,6 +15,19 @@ class Config:
     TESTING = False
     STATIC_FOLDER = 'static'
     STATIC_URL_PATH = '/static'
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB limit, for example
+    UPLOAD_FOLDER = 'static/user_profile-pic'
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD= os.getenv('MAIL_PASSWORD')
+    MAIL_SERVER='smtp.gmail.com'
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+    MAIL_PORT=int(os.getenv('MAIL_PORT', 587))
+    MAIL_USE_TLS=True
+    MAIL_USE_SSL=False
+    MAIL_DEFAULT_SENDER= os.getenv('MAIL_DEFAULT_SENDER')
+    MAIL_SUPPRESS_SEND = False
+
 
     # Custom MIME type mapping
     MIME_TYPES = {
