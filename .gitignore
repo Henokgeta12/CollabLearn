@@ -8,6 +8,7 @@ venv/
 *.mp4
 # Ignore user profile pictures directory
 /app/static/user_profile-pic/
+chat-server/node_modules/
 
 # Ignore environment files
 *.flaskenv

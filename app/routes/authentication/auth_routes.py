@@ -32,7 +32,7 @@ def login():
                 flash('Invalid username or password', 'danger')
     return render_template('login.html', form=form)
 
-@auth_bp.route('/logout')
+@auth_bp.route('/logout', methods=['POST'])
 @login_required
 def logout():
     """

@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_required,current_user
 from app.models.group_models import StudyGroups, GroupMemberships, GroupResources
 from app.models.user_models import Users, db
 from .group_forms import UpdateTaskStatusForm,TaskForm,UploadResourceForm
@@ -37,12 +38,12 @@ def update_task_status(group_id):
         
     if not task:
         flash('Task not found.', 'danger')
-        return redirect(url_for('group', group_id=group_id))
+        return redirect(url_for('group.group', group_id=group_id))
             
     task.status = new_status
     db.session.commit()
     flash('Task status updated successfully!', 'success')
-    return redirect(url_for('group', group_id=group_id))
+    return redirect(url_for('group.group', group_id=group_id))
 
 @groupfunctions_bp.route('/group/<int:group_id>/save_group_notes', methods=['POST'])
 @login_required
@@ -111,7 +112,7 @@ def create_task(group_id):
                 try:
                     db.session.add(notification)
                     db.session.commit()
-                    return redirect(url_for('group', group_id=group_id))
+                    return redirect(url_for('group.group', group_id=group_id))
                 except Exception as e:
                     db.session.rollback()
                     flash(f'An error occurred : {str(e)}', 'danger')
@@ -169,6 +170,6 @@ def upload_resource(group_id):
         db.session.commit()
 
         flash('File uploaded successfully!', 'success')
-        return redirect(url_for('group', group_id=group_id))
+        return redirect(url_for('group.group', group_id=group_id))
 
     return render_template('group.html', upload_form=upload_form)

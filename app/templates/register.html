@@ -1,95 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}"> 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <!-- Favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Collab Study Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg" />
 </head>
-<body>
-    <div class="container">
-        <div class="col-auto">
-            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
-        </div>
-        <div class="intro">
-            <h2>Sign Up</h2>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-md">
+        <div class="text-center mb-6">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="mx-auto h-16 w-16 rounded-full shadow-md">
+            <h2 class="text-2xl font-semibold text-indigo-600 mt-4">Create Your Account</h2>
         </div>
 
-
-        <!-- Flash Message Display -->
-        <div class="flash-messages">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+        <!-- Flash Message -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="bg-blue-100 text-blue-700 p-3 rounded mb-4">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
         </div>
-        <!-- End Flash Message Display -->
+        {% endif %}
+        {% endwith %}
 
-        <form method="POST" action="{{ url_for('auth.register') }}">
+        <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-4">
             {{ form.hidden_tag() }}
 
-            <div class="form-group">
-                <label for="username">Username:</label>
-                {{ form.username(class="form-control") }}
+            <div>
+                <label class="block text-sm font-medium mb-1">Username</label>
+                {{ form.username(class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500") }}
                 {% if form.username.errors %}
-                    <div class="error-message">
-                        {% for error in form.username.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="email">Email:</label>
-                {{ form.email(class="form-control") }}
+            <div>
+                <label class="block text-sm font-medium mb-1">Email</label>
+                {{ form.email(class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500") }}
                 {% if form.email.errors %}
-                    <div class="error-message">
-                        {% for error in form.email.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.email.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="password">Password:</label>
-                {{ form.password(class="form-control") }}
+            <div>
+                <label class="block text-sm font-medium mb-1">Password</label>
+                {{ form.password(class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500") }}
                 {% if form.password.errors %}
-                    <div class="error-message">
-                        {% for error in form.password.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.password.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
 
-            <div class="form-group">
-                <label for="confirm_password">Confirm Password:</label>
-                {{ form.confirm_password(class="form-control") }}
+            <div>
+                <label class="block text-sm font-medium mb-1">Confirm Password</label>
+                {{ form.confirm_password(class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500") }}
                 {% if form.confirm_password.errors %}
-                    <div class="error-message">
-                        {% for error in form.confirm_password.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.confirm_password.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
 
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition duration-200">
+                Register
+            </button>
         </form>
-        <p class="login-link">Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <div class="text-center mt-6">
+            <p class="text-sm">Already have an account?</p>
+            <a href="{{ url_for('auth.login') }}"
+                class="inline-block mt-2 text-indigo-600 hover:text-indigo-800 underline">Login here</a>
+        </div>
+    </div>
 </body>
+
 </html>

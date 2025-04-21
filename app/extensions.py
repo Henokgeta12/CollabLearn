@@ -22,7 +22,7 @@ mail = Mail()
 def send_verification_email(email):
     try:
         token = serializer.dumps(email, salt='email-verification-salt')
-        link = url_for('verify_email', token=token, _external=True)
+        link = url_for('user.verify_email', token=token, _external=True)
         msg = Message('Welcome Confirm Your Email', recipients=[email])
         msg.body = f"Hello,\n\nPlease confirm your email by clicking the link below:\n{link}\n\nIf you didn’t request this, please ignore this email."
         msg.html = render_template('email_template.html', link=link)
@@ -43,7 +43,7 @@ def verifyEmail(token):
 def send_password_reset(email):
     try:
         token = serializer.dumps(email, salt='password-reset-salt')
-        link = url_for('reset_password', token=token, _external=True)
+        link = url_for('user.reset_password', token=token, _external=True)
         msg = Message('Password Reset Request ', recipients=[email])
         msg.body = f"Hello,\n\nPlease confirm your email to reset your password :\n{link}\n\nIf you didn’t request this, please ignore this email."
         msg.html = render_template('reset_email.html', link=link)

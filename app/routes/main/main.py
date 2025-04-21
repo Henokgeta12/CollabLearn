@@ -1,6 +1,8 @@
-from flask import Flask, render_template,Blueprint, request,jsonify
-from flask_login import login_required
+from flask import Flask, render_template,Blueprint, request,jsonify,url_for
+from flask_login import login_required,current_user
 from app.models.group_models import StudyGroups
+from app.models.user_models import Users
+from app.extensions import db
 
 main_bp = Blueprint('main', __name__)
 

@@ -89,14 +89,3 @@ class Update_Acc_Form(FlaskForm):
 class VerifyEmailForm(FlaskForm):
     submit = SubmitField('Verify Email')
 
-# ##
-# class UpdateProfileForm(FlaskForm):
-#     profile_img = FileField('Profile Image', validators=[
-#         FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Images only!'),
-#     ])
-#     submit = SubmitField('Update')
-#     def validate_profile_img(self, field):
-#         if not allowed_file(field.data.filename):
-#             raise ValidationError('Allowed image types are jpg, jpeg, png, gif')
-
-# ##

@@ -1,93 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - Collab Study Platform</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <!-- Favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg" />
 </head>
-<body>
-    <div class="container vh-100 d-flex justify-content-center align-items-center">
-        <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px;">
-            <div class="card-body">
-                <div class="text-center mb-4">
-                    <div class="col-auto">
-                        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
-                    </div><br>
-                    <h2 class="text-primary">Welcome to Collab Study Platform</h2><br>
-            
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-md">
+        <div class="text-center mb-6">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="mx-auto h-16 w-16 rounded-full shadow-md">
+            <h2 class="text-2xl font-semibold text-indigo-600 mt-4">Welcome to Collab Study Platform</h2>
+        </div>
+
+        <!-- Flash Message -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="bg-blue-100 text-blue-700 p-3 rounded mb-4">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <h3 class="text-lg font-semibold text-center mb-4">Sign In</h3>
+        <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-4">
+            {{ form.hidden_tag() }}
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Username</label>
+                {{ form.username(class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500") }}
+                {% if form.username.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
                 </div>
-                <!-- Flash Message Display -->
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <div class="alert alert-info">
-                            {% for message in messages %}
-                                <p class="mb-0">{{ message }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                <!-- End Flash Message Display -->
-
-                <h4 class="text-center">Sign In</h4>
-                <form method="POST" action="{{ url_for('auth.login') }}">
-                    {{ form.hidden_tag() }}
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        {{ form.username(class="form-control") }}
-                        {% if form.username.errors %}
-                            <div class="text-danger">
-                                {% for error in form.username.errors %}
-                                    <small>{{ error }}</small><br>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        {{ form.password(class="form-control") }}
-                        {% if form.password.errors %}
-                            <div class="text-danger">
-                                {% for error in form.password.errors %}
-                                    <small>{{ error }}</small><br>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group form-check">
-                        {{ form.remember(class="form-check-input") }}
-                        {{ form.remember.label(class="form-check-label") }}
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
-                </form>
-
-                <div class="text-center mt-4">
-                    <h6>Don't have an account?</h6>
-                    <form method="POST" action="{{ url_for('auth.register') }}">
-                        {{ form.hidden_tag() }}
-                        <button type="submit" class="btn btn-outline-primary btn-block">Sign Up</button>
-                    </form>
-                </div>
-                
-                <!-- Forgot Password Link -->
-                <div class="text-center mt-3">
-                    <a href="{{ url_for('user.request_reset') }}" class="text-primary">Forgot Password?</a>
-                </div>
-
+                {% endif %}
             </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Password</label>
+                {{ form.password(class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500") }}
+                {% if form.password.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                    {% for error in form.password.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center">
+                {{ form.remember(class="mr-2") }}
+                {{ form.remember.label(class="text-sm") }}
+            </div>
+
+            <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition duration-200">
+                Login
+            </button>
+        </form>
+
+        <div class="text-center mt-6">
+            <p class="text-sm">Don't have an account?</p>
+            <a href="{{ url_for('auth.register') }}"
+                class="inline-block mt-2 text-indigo-600 hover:text-indigo-800 underline">Sign Up</a>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('user.request_reset') }}" class="text-sm text-indigo-500 hover:underline">
+                Forgot Password?
+            </a>
         </div>
     </div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

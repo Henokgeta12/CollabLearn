@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Email
+from wtforms import EmailField, PasswordField, SubmitField,StringField,FileField
+from wtforms.validators import InputRequired, Email,Length,EqualTo,ValidationError,Regexp,DataRequired
+from flask_wtf.file import FileRequired,FileAllowed
+
 
 class Update_Acc_Form(FlaskForm):
     username = StringField('Username', validators=[

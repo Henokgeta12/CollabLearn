@@ -113,7 +113,7 @@ def join_group():
     form = JoinGroupForm()
     page = request.args.get('page', 1, type=int)
     per_page = 5
-    pagination = StudyGroups.query.filter_by(privacy='public').paginate(page=page, per_page=per_page, error_out=False)
+    pagination = StudyGroups.query.paginate(page=page, per_page=per_page, error_out=False)
     groups = pagination.items
 
     if request.method == 'POST':

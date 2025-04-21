@@ -1,79 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Collab Study Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
-    <!-- Favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Collab Study Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="image/jpg">
 </head>
-<body>
-    <div class="container-fluid p-0">
-        <header class="hero">
-            <div class="hero-overlay">
-                <h1>Welcome to Collab Study Platform</h1>
-                <div class="col-auto">
-                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
-                </div>
-            </div>
-        </header>
+<body class="bg-gray-50 font-['Roboto']">
 
-
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container">
-                <a class="navbar-brand" href="#">Collab Study Platform</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <section class="description container my-4">
-            <p>Collab Study Platform is your go-to place for creating and joining study groups. Whether you want to collaborate with peers or manage study sessions, our platform offers the tools you need to succeed.</p>
-        </section>
-
-        <!-- Features Section -->
-        <section class="features container my-5">
-            <h2 class="text-center mb-4">Platform Features</h2>
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <img src="{{ url_for('static', filename='images/favicon_32x32.ico') }}" alt="Create Group" class="img-fluid mb-3" style="max-width: 80px;">
-                    <h5>Create Study Groups</h5>
-                    <p>Easily create study groups and invite your friends or classmates to join.</p>
-                </div>
-                <div class="col-md-4 text-center">
-                    <img src="{{ url_for('static', filename='images/favicon_32x32.ico') }}" alt="Collaborate" class="img-fluid mb-3" style="max-width: 80px;">
-                    <h5>Collaborate in Real-Time</h5>
-                    <p>Chat, share resources, and take notes together in real time.</p>
-                </div>
-                <div class="col-md-4 text-center">
-                    <img src="{{ url_for('static', filename='images/favicon_32x32.ico') }}" alt="Track Progress" class="img-fluid mb-3" style="max-width: 80px;">
-                    <h5>Track Progress</h5>
-                    <p>Monitor group activity and stay updated on tasks and goals.</p>
-                </div>
-            </div>
-        </section>
-
-        <footer class="footer text-center py-3">
-            <p>&copy; 2025 Collab Study Platform. All rights reserved.</p>
-        </footer>
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold text-blue-600">Collab Study Platform</div>
+      <div class="space-x-4">
+        <a href="{{ url_for('auth.login') }}" class="text-gray-700 hover:text-blue-600 font-medium">Login</a>
+        <a href="{{ url_for('auth.register') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Register</a>
+      </div>
     </div>
+  </nav>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Hero Section -->
+  <header class="relative bg-blue-500 text-white py-20 text-center">
+    <div class="absolute inset-0 bg-black opacity-40 z-0"></div>
+    <div class="relative z-10 max-w-xl mx-auto px-4">
+      <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="mx-auto w-24 h-24 rounded-full shadow-lg mb-6" />
+      <h1 class="text-4xl font-bold mb-4">Welcome to Collab Study Platform</h1>
+      <p class="text-lg">Your space to connect, collaborate, and conquer your studies.</p>
+    </div>
+  </header>
+
+  <!-- Description Section -->
+  <section class="max-w-4xl mx-auto my-12 px-4 text-center">
+    <p class="text-gray-700 text-lg">
+      Collab Study Platform is your go-to place for creating and joining study groups. Whether you want to collaborate with peers or manage study sessions, our platform offers the tools you need to succeed.
+    </p>
+  </section>
+
+  <!-- Features Section -->
+  <section class="max-w-6xl mx-auto px-4 my-16">
+    <h2 class="text-3xl font-semibold text-center text-gray-800 mb-10">Platform Features</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+      <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+        <img src="{{ url_for('static', filename='images/favicon_32x32.ico') }}" alt="Create Group" class="mx-auto mb-4 w-16" />
+        <h3 class="text-xl font-semibold mb-2">Create Study Groups</h3>
+        <p class="text-gray-600">Easily create study groups and invite your friends or classmates to join.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+        <img src="{{ url_for('static', filename='images/favicon_32x32.ico') }}" alt="Collaborate" class="mx-auto mb-4 w-16" />
+        <h3 class="text-xl font-semibold mb-2">Collaborate in Real-Time</h3>
+        <p class="text-gray-600">Chat, share resources, and take notes together in real time.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+        <img src="{{ url_for('static', filename='images/favicon_32x32.ico') }}" alt="Track Progress" class="mx-auto mb-4 w-16" />
+        <h3 class="text-xl font-semibold mb-2">Track Progress</h3>
+        <p class="text-gray-600">Monitor group activity and stay updated on tasks and goals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 text-center py-4 mt-10 text-sm text-gray-600">
+    &copy; 2025 Collab Study Platform. All rights reserved.
+  </footer>
+
 </body>
 </html>

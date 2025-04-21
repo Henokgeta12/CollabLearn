@@ -1,112 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaborative Study Platform</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Collaborative Study Platform</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-    <!-- Favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='images/logo.jpg') }}" type="images/jpg">
-
-
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <!-- Header Section -->
-    <header class="header text-center">
-        <div class="container">
-            <div class="col-auto">
-                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Collaborative Study Platform Logo" class="logo">
-            </div>
-            <h1>Collaborative Study Platform</h1>
-            <p class="lead">A place to create, join, and collaborate in study groups.</p>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-6 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="w-12 h-12 rounded-full shadow">
+        <div>
+          <h1 class="text-2xl font-bold">Collaborative Study Platform</h1>
+          <p class="text-sm text-gray-600">Create, join, and collaborate in study groups.</p>
         </div>
-    </header>
-
-    <div class="container mt-5">
-        <!-- Flash Messages -->
-        <div class="flash-messages">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </div>
-
-        <!-- User Session Actions -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                {% if current_user.is_authenticated %}
-                    <p class="lead">Welcome, <strong id="username">{{ current_user.username }}</strong></p>
-                    <!-- Search Form -->
-                    <form id="search-form" class="form-inline justify-content-center mt-3">
-                        <input type="text" id="search" name="search" class="form-control mr-2" placeholder="Search Groups or Users...">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </form>
-                {% else %}
-                    <p class="lead">Please <a href="{{ url_for('auth.login') }}">log in</a> or <a href="{{ url_for('user.register') }}">register</a>.</p>
-                {% endif %}
-            </div>
-            <div class="col-md-4 text-right">
-                {% if current_user.is_authenticated %}
-                    <form action="{{ url_for('auth.logout') }}" method="post" class="d-inline" onsubmit="return confirmLogout();">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-danger btn-sm">Logout</button>
-                    </form>
-                    <form action="{{ url_for('user.account') }}" method="get" class="d-inline">
-                        <button type="submit" class="btn btn-primary btn-sm">Account</button>
-                    </form>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Group Actions Section -->
-        <section class="group-actions text-center">
-            <h2 class="mb-4">Group Actions</h2>
-            <div class="row justify-content-center">
-                <div class="col-md-5">
-                    <form action="{{ url_for('group.create_group') }}" method="post">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-success">Create a New Group</button>
-                    </form>
-                </div>
-                <div class="col-md-5">
-                    <form action="{{ url_for('group.join_group') }}" method="get">
-                        <button type="submit" class="btn btn-info">Join an Existing Group</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- Search Results Section -->
-        <section id="search-results" class="mt-4">
-            <!-- Dynamic search results will appear here -->
-        </section>
-
-        <!-- Project Description Section -->
-        <section class="project-description mt-5">
-            <h2>About the Platform</h2>
-            <p>Welcome to the Collaborative Study Platform, where students and educators come together to create and join study groups. Our platform is designed to foster collaboration and enhance learning experiences. Whether you're preparing for exams, working on a project, or simply want to discuss topics with peers, our platform provides the tools you need to succeed.</p>
-        </section>
+      </div>
+      {% if current_user.is_authenticated %}
+      <div class="space-x-2">
+        <form action="{{ url_for('auth.logout') }}" method="post" class="inline" onsubmit="return confirmLogout();">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Logout</button>
+        </form>
+        <form action="{{ url_for('user.account') }}" method="get" class="inline">
+          <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Account</button>
+        </form>
+      </div>
+      {% endif %}
     </div>
+  </header>
 
-    <!-- Footer Section -->
-    <footer class="footer mt-5">
-        <div class="container">
-            <p class="text-center">&copy; 2025 Collaborative Study Platform. All rights reserved.</p>
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-10">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4 space-y-2">
+          {% for category, message in messages %}
+            <div class="p-3 rounded bg-{{ 'green' if category == 'success' else 'red' }}-100 text-{{ 'green' if category == 'success' else 'red' }}-700">
+              {{ message }}
+            </div>
+          {% endfor %}
         </div>
-    </footer>
+      {% endif %}
+    {% endwith %}
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        // Pass the search URL to the JavaScript file
-        const searchUrl = "{{ url_for('main.search') }}";
-    </script>
-    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <!-- Welcome + Search -->
+    {% if current_user.is_authenticated %}
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold">Welcome, <span class="text-blue-600" id="username">{{ current_user.username }}</span></h2>
+      <form id="search-form" class="mt-4 flex flex-col sm:flex-row gap-2 sm:gap-4">
+        <input type="text" id="search" name="search" placeholder="Search Groups or Users..." class="flex-1 px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-blue-500">
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Search</button>
+      </form>
+    </div>
+    {% else %}
+    <p class="text-lg">Please <a href="{{ url_for('auth.login') }}" class="text-blue-600 underline">log in</a> or <a href="{{ url_for('user.register') }}" class="text-blue-600 underline">register</a> to get started.</p>
+    {% endif %}
+
+    <!-- Group Actions -->
+    {% if current_user.is_authenticated %}
+    <section class="mb-12 text-center">
+      <h2 class="text-2xl font-bold mb-6">Group Actions</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <form action="{{ url_for('group.create_group') }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 shadow">Create a New Group</button>
+        </form>
+        <form action="{{ url_for('group.join_group') }}" method="get">
+          <button class="w-full bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 shadow">Join an Existing Group</button>
+        </form>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Search Results Placeholder -->
+    <section id="search-results" class="mt-6">
+      <!-- Search results will populate here dynamically -->
+    </section>
+
+    <!-- About Section -->
+    <section class="mt-12 bg-white p-8 rounded-lg shadow max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold mb-4">About the Platform</h2>
+      <p class="text-gray-700 leading-relaxed">
+        Welcome to the Collaborative Study Platform, where students and educators come together to create and join study groups.
+        Our platform is designed to foster collaboration and enhance learning experiences. Whether you're preparing for exams,
+        working on a project, or simply want to discuss topics with peers, our platform provides the tools you need to succeed.
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 py-4 text-center text-sm text-gray-500 mt-auto">
+    &copy; 2025 Collaborative Study Platform. All rights reserved.
+  </footer>
+
+  <!-- JS -->
+  <script>
+    const searchUrl = "{{ url_for('main.search') }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 </body>
 </html>

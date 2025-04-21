@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, Blueprint
 from app.models.user_models import Users,db
 from werkzeug.utils import secure_filename
-from app.forms import RegistrationForm, LoginForm, UpdateProfileForm, Update_Acc_Form, VerifyEmailForm, ConfirmPasswordForm, ResetPasswordForm
+from app.routes.user.user_forms import RegistrationForm, LoginForm, UpdateProfileForm, Update_Acc_Form, VerifyEmailForm, ConfirmPasswordForm, ResetPasswordForm
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 import os
@@ -111,11 +111,11 @@ def send_verification():
     email = current_user.email
     if not email:
         flash('Email not found', 'error')
-        return redirect(url_for('account')) 
+        return redirect(url_for('user.account')) 
 
     if current_user.is_verified:
         flash('Email already verified', 'success')
-        return redirect(url_for('account'))
+        return redirect(url_for('user.account'))
         
     send_verification_email(email)
 
@@ -143,14 +143,14 @@ def verify_email(token):
     user = Users.query.filter_by(email=email).first()
     if not user:
         flash('User not found','error')
-        return redirect(url_for('account'))
+        return redirect(url_for('user.account'))
 
         # Mark the user as verified
     try:
         user.is_verified = True
         db.session.commit()
         flash('Your email has been successfully verified!', 'success')
-        return redirect(url_for('account'))
+        return redirect(url_for('user.account'))
     except Exception as e:
         db.session.rollback()
         flash(f'An error occurred : {str(e)}', 'danger')
