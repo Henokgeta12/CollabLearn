@@ -14,7 +14,7 @@ Welcome to **CollabLearn**, a web application designed to facilitate collaborati
 
 ## 📸 Demo Preview
 
-<img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGlyMGdpaTl4bm9rcTd2ZGU5M3czc2Jxb3Y0cncyN3YzdGlxaDJ6ZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/PlZrLrhdzL3K3G0z63/giphy.gif" alt="CollabLearn demo gif" width="100%" />
+<img src="[https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGlyMGdpaTl4bm9rcTd2ZGU5M3czc2Jxb3Y0cncyN3YzdGlxaDJ6ZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/PlZrLrhdzL3K3G0z63/giphy.gif](https://drive.google.com/file/d/18ZXthOZfxMi9mtO58TYCE2fWjV789B8J/view?usp=drive_link)" alt="CollabLearn demo gif" width="100%" />
 
 ---
 
