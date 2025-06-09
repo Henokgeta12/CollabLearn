@@ -4,6 +4,7 @@ __pycache__/
 
 # Ignore virtual environment directory
 venv/
+.vscode/
 *.zip
 *.mp4
 # Ignore user profile pictures directory
